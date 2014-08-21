@@ -17,6 +17,12 @@ action :install do
   end
 end
 
+# Removes an application
+action :remove do
+  converge_by("Remove #{ @new_resource }") do
+    remove
+  end
+end
 
 private
 
@@ -103,5 +109,35 @@ def deploy
     migrate new_resource.migrate
     migration_command new_resource.migration_command
     action (new_resource.force_deploy ? :force_deploy : :deploy)
+  end
+end
+
+def remove
+  #callback :before_remove
+  remove_user
+  remove_directories
+end
+
+# Deletes group & user
+def remove_user
+  user new_resource.user do
+    action :remove
+  end
+
+  group new_resource.group do
+    action :remove
+  end
+end
+
+# Removes application base directory and every subdirectory inside it.
+def remove_directories
+  directory new_resource.home do
+    recursive true
+    action :delete
+  end
+
+  directory new_resource.path do
+    recursive true
+    action :delete
   end
 end
