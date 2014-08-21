@@ -1,8 +1,8 @@
 name             'cespi_application'
-maintainer       'YOUR_NAME'
-maintainer_email 'YOUR_EMAIL'
+maintainer       'Christian A. Rodriguez & Leandro Di Tommaso'
+maintainer_email 'car@cespi.unlp.edu.ar lditommaso@cespi.unlp.edu.ar'
 license          'All rights reserved'
-description      'Installs/Configures cespi_application'
+description      'Provides resources for almost any CeSPI application'
 long_description 'Installs/Configures cespi_application'
 version          '0.1.0'
 

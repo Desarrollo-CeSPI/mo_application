@@ -17,6 +17,17 @@ action :install do
   end
 end
 
+def new_resource_user
+  new_resource.user || new_resource.name
+end
+
+def new_resource_home
+  new_resource.home || "/home/#{new_resource_user}"
+end
+
+def new_resource_group
+  new_resource.group || new_resource_user
+end
 
 private
 
@@ -24,17 +35,16 @@ def install
   create_user
   create_directories
   callback :before_deploy
-  deploy
+  deploy_application
 end
 
 # Creates group & user
 def create_user
-  group new_resource.group
-
-  user new_resource.user do
+  group new_resource_group
+  user new_resource_user do
     supports :manage_home => true
-    home new_resource.home
-    gid new_resource.group
+    home new_resource_home
+    gid new_resource_group
     shell new_resource.shell
   end
 end
@@ -76,8 +86,8 @@ end
 def create_directory(dir)
   directory dir do
     recursive true
-    owner new_resource.user
-    group new_resource.group
+    owner new_resource_user
+    group new_resource_group
   end
 end
 
@@ -89,8 +99,9 @@ def callback(name)
 end
 
 # Chef deploy resource wrapper
-def deploy
-  deploy_revision new_resource.name do
+def deploy_application
+  deploy new_resource.name do
+    provider Chef::Provider::Deploy::Revision
     deploy_to new_resource.path
     repo new_resource.repo
     revision new_resource.revision
@@ -98,10 +109,11 @@ def deploy
     create_dirs_before_symlink new_resource.shared_dirs.keys
     symlink_before_migrate new_resource.shared_files
     symlinks new_resource.shared_dirs
-    user new_resource.user
-    group new_resource.group
+    user new_resource_user
+    group new_resource_group
     migrate new_resource.migrate
     migration_command new_resource.migration_command
     action (new_resource.force_deploy ? :force_deploy : :deploy)
   end
 end
+

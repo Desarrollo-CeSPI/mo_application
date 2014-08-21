@@ -2,9 +2,9 @@ actions :install, :remove
 default_action :install
 
 attribute :name, :kind_of => String, :name_attribute => true
-attribute :user, :kind_of => [String, NilClass], :default => (lazy {|r|r.name})
-attribute :group, :kind_of => [String, NilClass], :default => (lazy {|r|r.user})
-attribute :home, :kind_of => [String, NilClass], :default => (lazy {|r| "/home/#{r.user}"})
+attribute :user, :kind_of => [String, NilClass], :default => nil
+attribute :group, :kind_of => [String, NilClass], :default => nil
+attribute :home, :kind_of => [String, NilClass], :default => nil
 attribute :shell, :kind_of => String, :default => "/bin/bash"
 attribute :path, :kind_of => String, :required => true
 attribute :repo, :kind_of => String, :required => true
