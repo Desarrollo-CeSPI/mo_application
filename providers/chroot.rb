@@ -1,6 +1,5 @@
 use_inline_resources
 
-CHROOT_DIRECTORIES = %w(dev etc lib lib64 log run usr/lib usr/share tmp var)
 
 # Support whyrun
 def whyrun_supported?
@@ -9,7 +8,7 @@ end
 
 # Load current resource set defaults for some unsetted attributes
 def load_current_resource
-  @current_resource ||= Chef::Resource::CespiApplicationDeploy.new(@new_resource.name)
+  @current_resource ||= Chef::Resource::CespiApplicationChroot.new(@new_resource.name)
 end
 
 # Installs an application
@@ -28,27 +27,49 @@ end
 
 private
 
-def create
-  create_directories
+def bindable_chroot_dirs
+  %w(dev lib usr/lib usr/share).
+    concat(x86_64? ? ['/lib64']:[])
 end
 
-def create_directories
-  CHROOT_DIRECTORIES.each do |dir|
-    directory ::File.join(new_resource.path, dir) do
-      recursive true
-    end
+def chroot_dirs
+  bindable_chroot_dirs + %w(etc log tmp var run)
+end
+
+
+def x86_64?
+  node['kernel']['machine'].include? "64"
+end
+
+def create
+  chroot_dirs.
+    each do |dir|
+      directory ::File.join(new_resource.path, dir) do
+        recursive true
+      end
   end
+
+  bind_directories [:mount, :enable]
 end
 
 def remove
-  remove_directories
-end
 
-# Removes application base directory and every subdirectory inside it.
-def remove_directories
+  bind_directories [:umount, :disable]
+
   directory new_resource.path do
     recursive true
     action :delete
   end
 end
 
+def bind_directories(actions)
+  bindable_chroot_dirs.
+    each do |dir|
+      mount ::File.join(new_resource.path,dir) do
+        device ::File.join('',dir)
+        fstype "none"
+        options %w(bind ro)
+        action actions
+      end
+    end
+end
