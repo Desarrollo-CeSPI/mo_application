@@ -49,7 +49,7 @@ def create
       end
   end
 
-  bind_directories [:mount, :enable]
+  bind_directories [:enable, :mount]
 end
 
 def remove
