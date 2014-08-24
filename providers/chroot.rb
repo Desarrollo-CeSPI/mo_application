@@ -1,3 +1,6 @@
+require 'chef/mixin/shell_out'
+include Chef::Mixin::ShellOut
+
 use_inline_resources
 
 
@@ -27,19 +30,23 @@ end
 
 private
 
-def bindable_chroot_dirs
-  %w(dev lib usr/lib usr/share).
-    concat(x86_64? ? ['/lib64']:[])
+def copy_files
+  (new_resource.copy_files.is_a?(String) ? new_resource.copy_files.split(',') : new_resource.copy_files).
+    map do |app|
+      cmd = shell_out("ldd #{app}")
+      # If can't retrieve ldd, then output app
+      cmd.error? ? app : cmd.stdout.split.grep(/^\//)
+  end.flatten.sort.uniq
+end
+
+def copy_dirs
+  copy_files.map{|x| ::File.dirname x}.sort.uniq
 end
 
 def chroot_dirs
-  bindable_chroot_dirs + %w(etc log tmp var run)
+  copy_dirs + %w(dev etc log run tmp var)
 end
 
-
-def x86_64?
-  node['kernel']['machine'].include? "64"
-end
 
 def create
   chroot_dirs.
@@ -48,28 +55,22 @@ def create
         recursive true
       end
   end
-
-  bind_directories [:enable, :mount]
+  copy
 end
 
 def remove
-
-  bind_directories [:umount, :disable]
-
   directory new_resource.path do
     recursive true
     action :delete
   end
 end
 
-def bind_directories(actions)
-  bindable_chroot_dirs.
-    each do |dir|
-      mount ::File.join(new_resource.path,dir) do
-        device ::File.join('',dir)
-        fstype "none"
-        options %w(bind ro)
-        action actions
-      end
+def copy
+  copy_files.each do |file|
+    ruby_block "copy file #{file}" do
+      block { shell_out! "cp -aL #{file} #{::File.join new_resource.path, file}" }
+      not_if "test -e #{::File.join new_resource.path, file}"
     end
+  end
 end
+
