@@ -9,11 +9,6 @@ def whyrun_supported?
    true
 end
 
-# Load current resource set defaults for some unsetted attributes
-def load_current_resource
-  @current_resource ||= Chef::Resource::CespiApplicationChroot.new(@new_resource.name)
-end
-
 # Installs an application
 action :create do
   converge_by("Create #{ @new_resource }") do
@@ -30,12 +25,20 @@ end
 
 private
 
+def copy_etc_files
+  %w(
+      /etc/hosts
+      /etc/resolv.conf
+      /etc/services)
+end
+
 def copy_files
-  (new_resource.copy_files.is_a?(String) ? new_resource.copy_files.split(',') : new_resource.copy_files).
+  ((new_resource.copy_files.is_a?(String) ? new_resource.copy_files.split(',') : new_resource.copy_files) +
+   copy_etc_files).
     map do |app|
       cmd = shell_out("ldd #{app}")
       # If can't retrieve ldd, then output app
-      cmd.error? ? app : cmd.stdout.split.grep(/^\//)
+      [app] +  (cmd.error? ? [] : cmd.stdout.split.grep(/^\//))
   end.flatten.sort.uniq
 end
 
@@ -44,7 +47,7 @@ def copy_dirs
 end
 
 def chroot_dirs
-  (copy_dirs + %w(/dev /etc /log /run /tmp /var)).sort.uniq
+  (copy_dirs + %w(/dev /log /run /tmp /var)).sort.uniq
 end
 
 
