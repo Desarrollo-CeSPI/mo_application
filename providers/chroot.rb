@@ -44,7 +44,7 @@ def copy_dirs
 end
 
 def chroot_dirs
-  copy_dirs + %w(dev etc log run tmp var)
+  (copy_dirs + %w(/dev /etc /log /run /tmp /var)).sort.uniq
 end
 
 
