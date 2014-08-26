@@ -5,11 +5,6 @@ def whyrun_supported?
    true
 end
 
-# Load current resource set defaults for some unsetted attributes
-def load_current_resource
-  @current_resource ||= Chef::Resource::CespiApplicationDeploy.new(@new_resource.name)
-end
-
 # Installs an application
 action :install do
   converge_by("Install #{ @new_resource }") do
@@ -17,17 +12,6 @@ action :install do
   end
 end
 
-def new_resource_user
-  new_resource.user || new_resource.name
-end
-
-def new_resource_home
-  new_resource.home || "/home/#{new_resource_user}"
-end
-
-def new_resource_group
-  new_resource.group || new_resource_user
-end
 
 # Removes an application
 action :remove do
@@ -39,22 +23,11 @@ end
 private
 
 def install
-  create_user
   create_directories
   callback :before_deploy
   deploy_application
 end
 
-# Creates group & user
-def create_user
-  group new_resource_group
-  user new_resource_user do
-    supports :manage_home => true
-    home new_resource_home
-    gid new_resource_group
-    shell new_resource.shell
-  end
-end
 
 # Creates application required directories to deploy into
 # Applications directory tree will be composed as capistrano or
@@ -93,8 +66,8 @@ end
 def create_directory(dir)
   directory dir do
     recursive true
-    owner new_resource_user
-    group new_resource_group
+    owner new_resource.user
+    group new_resource.group
   end
 end
 
@@ -116,8 +89,8 @@ def deploy_application
     create_dirs_before_symlink new_resource.shared_dirs.keys
     symlink_before_migrate new_resource.shared_files
     symlinks new_resource.shared_dirs
-    user new_resource_user
-    group new_resource_group
+    user new_resource.user
+    group new_resource.group
     migrate new_resource.migrate
     migration_command new_resource.migration_command
     action (new_resource.force_deploy ? :force_deploy : :deploy)
@@ -126,28 +99,12 @@ end
 
 def remove
   #callback :before_remove
-  remove_user
   remove_directories
 end
 
-# Deletes group & user
-def remove_user
-  user new_resource.user do
-    action :remove
-  end
-
-  group new_resource.group do
-    action :remove
-  end
-end
 
 # Removes application base directory and every subdirectory inside it.
 def remove_directories
-  directory new_resource.home do
-    recursive true
-    action :delete
-  end
-
   directory new_resource.path do
     recursive true
     action :delete
