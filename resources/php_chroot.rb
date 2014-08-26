@@ -19,6 +19,6 @@ def php_fpm_required_files
     Chef::Application.fatal! "php extension_dir cannot be empty" if php_extension_dir.empty?
     arr.concat shell_out!("find #{php_extension_dir} -type f").stdout.split
     arr << shell_out!("which php").stdout.chomp
-    arr.concat %w(/dev/zero /dev/urandom /dev/null)
+    arr.concat %w(/dev/zero /dev/urandom /dev/null /usr/share/zoneinfo)
   end
 end
