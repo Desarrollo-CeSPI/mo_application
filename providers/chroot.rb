@@ -56,6 +56,9 @@ def create
     each do |dir|
       directory ::File.join(new_resource.path, dir) do
         recursive true
+        if dir == "/tmp"
+          mode "1777"
+        end
       end
   end
   copy
