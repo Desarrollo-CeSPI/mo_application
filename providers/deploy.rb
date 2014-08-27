@@ -86,7 +86,6 @@ def deploy_application
     repo new_resource.repo
     revision new_resource.revision
     purge_before_symlink new_resource.shared_dirs.values
-    create_dirs_before_symlink new_resource.shared_dirs.keys
     symlink_before_migrate new_resource.shared_files
     symlinks new_resource.shared_dirs
     user new_resource.user
