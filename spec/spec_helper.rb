@@ -30,20 +30,10 @@ end
 #ChefSpec::Coverage.start!
 at_exit { ChefSpec::Coverage.report! }
 
-def chef_run_lwrp(resource, opts = {})
+def chef_run_lwrp(resource, opts = {}, &block)
     options = {
       step_into: [resource.to_s]
     }.merge(opts)
-    ChefSpec::Runner.new(options)
+    ChefSpec::Runner.new(options, &block)
 end
 
-#Add shell out expectation
-def expects_shell_out(command,at_least: :once)
-  shellout =  double
-  [:live_stream=, :run_command, :error!].each do |method|
-    allow(shellout).to receive(method)
-  end
-  allow(shellout).to receive(:error?).and_return(false)
-  allow(shellout).to receive(:stdout).and_return("")
-  expect(Mixlib::ShellOut).to receive(:new).with(command).at_least(at_least).and_return(shellout)
-end

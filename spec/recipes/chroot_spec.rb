@@ -21,32 +21,33 @@ describe 'fake_chroot::create'do
 
   it 'copies default /etc files' do
     etc_files.each do |etc|
-      expects_shell_out("ldd #{etc}")
-    end
-
-    etc_files.each do |etc|
-      expects_shell_out("cp -aL #{etc} #{::File.join base, etc}")
-    end
-
-    etc_files.each do |etc|
       expect(chef_run).to run_ruby_block("copy file #{etc}")
-      chef_run.find_resources(:ruby_block).find { |r| r.name == "copy file #{etc}" }.old_run_action(:create)
+      r = chef_run.find_resources(:ruby_block).find { |rs| rs.name == "copy file #{etc}" }
+      expect(r).to receive(:shell_out!).with("cp -aL #{etc} #{::File.join base, etc}")
+      r.old_run_action(:create)
     end
   end
 
 end
 
 describe 'fake_chroot::create_with_files'do
-  let(:chef_run) { chef_run_lwrp(:cespi_application_chroot).converge(described_recipe)  }
-  let(:base) { '/tmp/chroot_with_copy_files' }
   let(:copy_files) { %w(/dev/null /bin/bash) }
+  let(:ldd_bin_bash) { %q(/lib/some_lib.so => unusable_data => /lib/other_lib.so) }
+  let(:chef_run) do 
+    shell_out_ldd_error = double("Shell Out ldd command", :error? => true)
+    shell_out_ldd_bin_bash = double("Shell Out ldd /bin/bash command", :error? => false, :stdout => ldd_bin_bash)
+    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do |node|
+      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
+      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd \/bin\/bash/).and_return shell_out_ldd_bin_bash
+    end
+  end
+
+  let(:base) { '/tmp/chroot_with_copy_files' }
   let(:etc_files) { %w( /etc/hosts /etc/resolv.conf /etc/services) }
-  let(:all_files) { copy_files + etc_files }
+  let(:all_files) { copy_files + etc_files + %w(/lib/some_lib.so /lib/other_lib.so) }
 
   before do
-    cmd = Mixlib::ShellOut.new("ldd /bin/bash")
-    (cmd.run_command.stdout.split.grep(/^\//) +
-      all_files).each do |file|
+    all_files.each do |file|
       stub_command("test -e #{base+file}").and_return(false)
     end
   end
@@ -60,16 +61,10 @@ describe 'fake_chroot::create_with_files'do
 
   it 'copies default /etc files' do
     all_files.each do |etc|
-      expects_shell_out("ldd #{etc}")
-    end
-
-    all_files.each do |etc|
-      expects_shell_out("cp -aL #{etc} #{::File.join base, etc}")
-    end
-
-    all_files.each do |etc|
       expect(chef_run).to run_ruby_block("copy file #{etc}")
-      chef_run.find_resources(:ruby_block).find { |r| r.name == "copy file #{etc}" }.old_run_action(:create)
+      r = chef_run.find_resources(:ruby_block).find { |rs| rs.name == "copy file #{etc}" }
+      expect(r).to receive(:shell_out!).with("cp -aL #{etc} #{::File.join base, etc}")
+      r.old_run_action(:create)
     end
   end
 
