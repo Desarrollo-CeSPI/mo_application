@@ -35,11 +35,10 @@ attribute :php_fpm_config, :kind_of => Hash, :default => Hash.new
 #       for this option must be a relative project path: by default we asume it is web/
 attribute :nginx_config, :kind_of => Hash, :default => { 'frontend' => Hash.new }
 
-attr_accessor :callbacks
+attr_reader :callback_before_deploy
 
-
-def before_deploy(arg=nil, &block)
-  callbacks[:before_deploy] = block
+def before_deploy(&block)
+  @callback_before_deploy= block
 end
 
 

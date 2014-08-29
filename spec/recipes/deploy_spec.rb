@@ -36,6 +36,10 @@ describe 'fake_deploy::create'do
     expect(chef_run).to create_template('/tmp/some.template')
   end
 
+  it 'uses application_template helper' do
+    expect(chef_run).to create_template('/tmp/some_other_path/shared/config/databases.yml')
+  end
+
   it 'creates shared_dires as specified' do
     expect(chef_run).to create_directory('/tmp/shared_test/shared/some_dir/config').with(
       owner: 'with_shared_files_and_dirs',

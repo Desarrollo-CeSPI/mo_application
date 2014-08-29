@@ -14,17 +14,17 @@ attribute :shared_files, :kind_of => Hash, :default => Hash.new
 attribute :create_dirs_before_symlink, :kind_of => Array, :default => []
 attribute :force_deploy, :kind_of => [TrueClass,FalseClass], :default => false
 
-attr_accessor :callbacks
+attr_reader :callback_before_deploy
 
+
+def before_deploy(&block)
+  @callback_before_deploy = block
+end
 
 def initialize(name, run_context=nil)
   super
-  @callbacks = {}
   @user = name
   @group = name
 end
 
 
-def before_deploy(arg=nil, &block)
-  callbacks[:before_deploy] = block
-end

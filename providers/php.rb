@@ -38,7 +38,7 @@ action :install do
     shared_files                new_resource.shared_files
     create_dirs_before_symlink  new_resource.create_dirs_before_symlink
     force_deploy                new_resource.force_deploy
-    before_deploy(nil,&new_resource.callbacks[:before_deploy])
+    before_deploy(&new_resource.callback_before_deploy) if new_resource.callback_before_deploy
   end
 
   php_fpm_pool
@@ -46,6 +46,23 @@ action :install do
   nginx_create_configuration
 
 end
+
+action :remove do
+  php_fpm_pool :delete
+
+  nginx_create_configuration :delete
+
+  cespi_application_php_chroot new_resource.path do
+    copy_files new_resource.copy_files
+    action :remove
+  end
+
+  cespi_application_user new_resource.user do
+    group new_resource.group
+    action :remove
+  end
+end
+
 
 
 def fix_chroot

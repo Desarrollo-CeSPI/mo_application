@@ -20,11 +20,15 @@ action :remove do
   end
 end
 
+def application_template(name, &block)
+  template(::File.join(new_resource.path,'shared', name),&block)
+end
+
 private
 
 def install
   create_directories
-  callback :before_deploy
+  instance_eval(&new_resource.callback_before_deploy) if new_resource.callback_before_deploy
   deploy_application
 end
 
@@ -71,13 +75,6 @@ def create_directory(dir)
   end
 end
 
-# If there is a callback set for name, then call it
-def callback(name)
-  if new_resource.callbacks[name].respond_to?(:call)
-    instance_eval(&new_resource.callbacks[name])
-  end
-end
-
 # Chef deploy resource wrapper
 def deploy_application
   deploy new_resource.name do
@@ -98,7 +95,6 @@ def deploy_application
 end
 
 def remove
-  #callback :before_remove
   remove_directories
 end
 

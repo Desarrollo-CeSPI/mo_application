@@ -8,6 +8,7 @@ cespi_application_deploy 'with_before_deploy' do
   repo 'some repo'
   before_deploy do
     template '/tmp/some.template'
+    application_template 'config/databases.yml'
   end
 end
 

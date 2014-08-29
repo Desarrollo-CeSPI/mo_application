@@ -2,14 +2,18 @@
 require 'chefspec'
 
 # Uncomment to use ChefSpec's Berkshelf extension
-#require 'chefspec/berkshelf'
+require 'chefspec/berkshelf'
 
 RSpec.configure do |config|
   # Specify the path for Chef Solo to find cookbooks
-  config.cookbook_path = [
-    File.expand_path('../../..', __FILE__),
-    File.expand_path('../cookbooks', __FILE__),
-  ]
+  config.before(:suite) do 
+    config.cookbook_path = [
+      File.expand_path('../../..', __FILE__),
+      File.expand_path('../cookbooks', __FILE__),
+      config.cookbook_path
+    ]
+
+  end
 
   # Specify the path for Chef Solo to find roles
   # config.role_path = '/var/roles'
