@@ -38,16 +38,15 @@ action :install do
     shared_files                new_resource.shared_files
     create_dirs_before_symlink  new_resource.create_dirs_before_symlink
     force_deploy                new_resource.force_deploy
-    before_deploy               new_resource.before_deploy
+    before_deploy(nil,&new_resource.callbacks[:before_deploy])
   end
 
   php_fpm_pool
 
-  nginx_conf
+  nginx_create_configuration
 
 end
 
-private
 
 def fix_chroot
   root = ::File.join(new_resource.path,new_resource.path)
@@ -94,7 +93,7 @@ def fpm_socket
 end
 
 def fpm_document_root(relative_path)
-  ::File.join 'current', (relative_path || 'web')
+  ::File.join '', new_resource.relative_path, 'current', (relative_path || 'web')
 end
 
 def nginx_document_root(relative_path)
@@ -133,18 +132,19 @@ def php_fpm_pool(template_action = :create)
   }.merge(new_resource.php_fpm_config)
 
   template "#{node[:php_fpm][:pools_path]}/#{new_resource.name}.conf" do
-    source "pool.erb"
-    cookbook 'php5-fpm'
-    variables({
-      :POOL_NAME => options
-    })
+    source "fpm_pool.erb"
+    cookbook 'cespi_application'
+    variables(
+      name: new_resource.name,
+      options: options
+    )
     action template_action
     notifies :restart, "service[#{node[:php_fpm][:package]}]", :delayed
   end
 end
 
-def nginx_conf(template_action=:create)
-  new_resource.nginx_config do |app_name,options|
+def nginx_create_configuration(template_action=:create)
+  new_resource.nginx_config.each do |app_name,options|
     name = "#{new_resource.name}_#{app_name}"
     conf = {
       "action"    => template_action,
@@ -164,9 +164,9 @@ def nginx_conf(template_action=:create)
           "fastcgi_pass"  => "unix:#{fpm_socket}",
           "include"       => "fastcgi_params",
           "fastcgi_param" => [
-            %Q(fastcgi_param  SCRIPT_FILENAME  #{nginx_document_root options['relative_document_root'] }),
-            %Q(fastcgi_param  SCRIPT_NAME $fastcgi_script_name),
-            %Q(fastcgi_param  DOCUMENT_ROOT #{fpm_document_root options['relative_document_root']})
+            %Q(SCRIPT_FILENAME  #{fpm_document_root options['relative_document_root'] }$fastcgi_script_name),
+            %Q(SCRIPT_NAME $fastcgi_script_name),
+            %Q(DOCUMENT_ROOT #{fpm_document_root options['relative_document_root']})
           ]
         },
         %q(~ ^/(status|ping)$) => {
@@ -182,7 +182,8 @@ def nginx_conf(template_action=:create)
         "access_log"  => ::File.join(www_log_dir, "#{name}-access.log"),
         "error_log"   => ::File.join(www_log_dir, "#{name}-error.log"),
       },
-      root: nginx_document_root(options['relative_document_root']),
+      "root"      => nginx_document_root(options['relative_document_root']),
+      "site_type" => "dynamic"
     }.merge(options)
 
     nginx_conf_file name do
