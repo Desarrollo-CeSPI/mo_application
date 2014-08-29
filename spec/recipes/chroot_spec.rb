@@ -3,7 +3,12 @@ require_relative '../spec_helper'
 
 describe 'fake_chroot::create'do
   # Use an explicit subject
-  let(:chef_run) { chef_run_lwrp(:cespi_application_chroot).converge(described_recipe)  }
+  let(:chef_run) do 
+    shell_out_ldd_error = double("Shell Out ldd command", :error? => true)
+    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do |node|
+      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
+    end
+  end
   let(:base) { '/tmp/default_chroot' }
   let(:etc_files) { %w( /etc/hosts /etc/resolv.conf /etc/services) }
 
