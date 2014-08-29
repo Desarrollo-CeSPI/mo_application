@@ -6,9 +6,6 @@ attribute :group, :kind_of => [String, NilClass], :default => nil
 attribute :home, :kind_of => [String, NilClass], :default => nil
 attribute :shell, :kind_of => String, :default => "/bin/bash"
 
-attr_accessor :callbacks
-
-
 def initialize(name, run_context=nil)
   super
   @user = name

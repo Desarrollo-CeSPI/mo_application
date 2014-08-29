@@ -71,7 +71,7 @@ def create_directory(dir)
   end
 end
 
-# If there is a callback setted for name, then call it
+# If there is a callback set for name, then call it
 def callback(name)
   if new_resource.callbacks[name].respond_to?(:call)
     instance_eval(&new_resource.callbacks[name])
