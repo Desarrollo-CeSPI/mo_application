@@ -1,4 +1,4 @@
-include Chef::DSL::InclueRecipe
+include Chef::DSL::IncludeRecipe
 
 use_inline_resources
 
