@@ -1,3 +1,5 @@
+include Chef::DSL::InclueRecipe
+
 use_inline_resources
 
 # Support whyrun
@@ -8,14 +10,8 @@ end
 # Create a database and grants privileges to it
 action :create do
   converge_by("Create #{ @new_resource }") do
+    include_recipe "database::mysql"
     create_database
-    grant_privileges
-  end
-end
-
-# Grants privileges to the specified database
-action :grant do
-  converge_by("Grants privileges to #{ @new_resource }") do
     grant_privileges
   end
 end
