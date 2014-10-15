@@ -5,7 +5,7 @@ describe 'fake_chroot::create'do
   # Use an explicit subject
   let(:chef_run) do 
     shell_out_ldd_error = double("Shell Out ldd command", :error? => true)
-    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do |node|
+    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do
       allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
     end
   end
@@ -62,6 +62,7 @@ describe 'fake_chroot::create_with_files'do
       expect(chef_run).to create_directory(::File.join base, dir).with(recursive: true)
     end
     expect(chef_run).to create_directory(::File.join base, 'bin').with(recursive: true)
+    expect(chef_run).to create_directory(::File.join base, 'lib').with(recursive: true)
   end
 
   it 'copies default /etc files' do

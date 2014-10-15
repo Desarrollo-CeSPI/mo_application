@@ -21,21 +21,22 @@ private
 
 # Establish a new connection to the database
 def db_connection
-  @db_connection ||= {:host => 'localhost', :username => 'root', :password => node['mysql']['server_root_password']}
+  {:host => new_resource.host, :username => new_resource.superuser, :password => new_resource.superuser_password}
 end
 
 def create_database
-  connection_info = db_connection
+  db_conn = db_connection
   mysql_database new_resource.name do
-    connection connection_info
+    connection db_conn
     action :create
   end
 end
 
 def grant_privileges
-  connection_info = db_connection
+  db_conn = db_connection
   mysql_database_user new_resource.username do
-    connection connection_info
+    connection db_conn
+    database_name new_resource.name
     password new_resource.password
     host new_resource.host
     action [:create, :grant]

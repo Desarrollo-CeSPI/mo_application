@@ -19,6 +19,7 @@ describe 'fake_user::create'do
   end
 
   it 'uses diferent home' do
+    expect(chef_run).to create_group('temporary_home')
     expect(chef_run).to create_user('temporary_home').with(
       supports: {manage_home: true},
       home: '/tmp/temporary_home'
@@ -26,6 +27,7 @@ describe 'fake_user::create'do
   end
 
   it 'uses diferent shell' do
+    expect(chef_run).to create_group('dont_like_bash')
     expect(chef_run).to create_user('dont_like_bash').with(shell: '/bin/sh')
   end
 
