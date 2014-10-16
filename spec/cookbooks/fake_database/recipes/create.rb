@@ -7,12 +7,12 @@ cespi_application_database 'with_different_params' do
   superuser_password 'dbsuper_password'
   superuser_host 'dbsuper_host'
   name 'dbname'
-  host 'dbhost'
+  hosts ['dbhost']
   username 'dbusername'
   password 'dbpassword'
 end
 
 cespi_application_database 'multihost' do
   password 'defaults_pass'
-  host %w(db1 db2)
+  hosts %w(db1 db2)
 end
