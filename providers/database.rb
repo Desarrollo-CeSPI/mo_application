@@ -34,7 +34,7 @@ end
 
 def grant_privileges
   db_conn = db_connection
-  new_resource.hosts.uniq.each do |h|
+  new_resource.application_servers.uniq.each do |h|
     mysql_database_user "#{new_resource.username}_#{h}" do
       connection db_conn
       username new_resource.username
