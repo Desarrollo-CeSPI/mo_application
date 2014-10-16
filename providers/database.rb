@@ -21,7 +21,7 @@ private
 
 # Establish a new connection to the database
 def db_connection
-  {:host => new_resource.host, :username => new_resource.superuser, :password => new_resource.superuser_password}
+  {:host => new_resource.superuser_host, :username => new_resource.superuser, :password => new_resource.superuser_password}
 end
 
 def create_database
@@ -34,11 +34,14 @@ end
 
 def grant_privileges
   db_conn = db_connection
-  mysql_database_user new_resource.username do
-    connection db_conn
-    database_name new_resource.name
-    password new_resource.password
-    host new_resource.host
-    action [:create, :grant]
+  Array(new_resource.host).each do |h|
+    mysql_database_user "#{new_resource.username}_#{h}" do
+      connection db_conn
+      username new_resource.username
+      database_name new_resource.name
+      password new_resource.password
+      host h
+      action [:create, :grant]
+    end
   end
 end
