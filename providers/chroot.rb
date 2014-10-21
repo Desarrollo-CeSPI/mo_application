@@ -74,7 +74,8 @@ def create
     device nscd_directory
     fstype  "none"
     options "bind"
-    action  [:mount, :enable]
+    action  [:enable, :mount]
+    not_if "mount | grep '#{new_resource.name}'"
   end
 
   copy
