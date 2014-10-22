@@ -83,12 +83,14 @@ end
 
 def remove
   nscd_directory = nscd_dir
+
   mount ::File.join(new_resource.path, nscd_dir) do
     device nscd_directory
     fstype  "none"
     options "bind"
     action  [:umount, :disable]
   end
+
   directory new_resource.path do
     recursive true
     action :delete

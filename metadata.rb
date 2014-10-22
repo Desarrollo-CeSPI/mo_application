@@ -8,3 +8,4 @@ version          '0.1.1'
 
 depends         'mysql', '=5.4.0'
 depends         'database', '=2.3.0'
+depends         'user', '~> 0.3.1'
