@@ -47,7 +47,7 @@ def copy_dirs
 end
 
 def nscd_dir
-  '/var/run/nscd'
+  '/run/nscd'
 end
 
 def chroot_dirs
@@ -56,7 +56,7 @@ end
 
 
 def create
-  package 'nscd'
+  run_context.include_recipe 'nscd'
 
   chroot_dirs.
     each do |dir|
