@@ -16,6 +16,14 @@ action :create do
   end
 end
 
+action :remove do
+  converge_by("Remove #{ @new_resource }") do
+    include_recipe "database::mysql"
+    drop_database
+    drop_user
+  end
+end
+
 
 private
 
@@ -42,6 +50,28 @@ def grant_privileges
       password new_resource.password
       host h
       action [:create, :grant]
+    end
+  end
+end
+
+def drop_database
+  db_conn = db_connection
+  mysql_database new_resource.name do
+    connection db_conn
+    action :drop
+  end
+
+end
+
+def drop_user
+  db_conn = db_connection
+  new_resource.application_servers.uniq.each do |h|
+    mysql_database_user "#{new_resource.username}_#{h}" do
+      connection db_conn
+      username new_resource.username
+      database_name new_resource.name
+      host h
+      action :drop
     end
   end
 end

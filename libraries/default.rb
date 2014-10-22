@@ -3,5 +3,6 @@ def cespi_database(data)
     username data['database']['username']
     password data['database']['password']
     application_servers data['database']['application_servers']
+    action :remove if data['database']['remove']
   end
 end

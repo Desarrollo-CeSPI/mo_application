@@ -50,8 +50,12 @@ def nscd_dir
   '/run/nscd'
 end
 
+def mysql_dir
+  '/run/mysqld'
+end
+
 def chroot_dirs
-  (copy_dirs + %w(/dev /log /run /tmp /var) + [nscd_dir]).sort.uniq
+  (copy_dirs + %w(/dev /log /run /tmp /var) + [nscd_dir, mysql_dir]).sort.uniq
 end
 
 
@@ -68,27 +72,35 @@ def create
       end
   end
 
-  nscd_directory = nscd_dir
+  link ::File.join(new_resource.path,'/var/run') do
+    to '/run'
+    only_if "test -d #{::File.join(new_resource.path,'run')}"
+  end
 
-  mount ::File.join(new_resource.path, nscd_dir) do
-    device nscd_directory
-    fstype  "none"
-    options "bind"
-    action  [:enable, :mount]
-    not_if "mount | grep '#{new_resource.name}'"
+  [nscd_dir, mysql_dir].each do |dir|
+
+    mount ::File.join(new_resource.path, dir) do
+      device  dir
+      fstype  "none"
+      options "bind"
+      action  [:enable, :mount]
+      not_if "[ ! -d #{dir} ] || ( mount | grep '#{::File.join new_resource.path, dir}')"
+    end
+
   end
 
   copy
 end
 
 def remove
-  nscd_directory = nscd_dir
 
-  mount ::File.join(new_resource.path, nscd_dir) do
-    device nscd_directory
-    fstype  "none"
-    options "bind"
-    action  [:umount, :disable]
+  [nscd_dir, mysql_dir].each do |dir|
+    mount ::File.join(new_resource.path, dir) do
+      device  dir
+      fstype  "none"
+      options "bind"
+      action  [:umount, :disable]
+    end
   end
 
   directory new_resource.path do

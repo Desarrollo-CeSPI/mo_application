@@ -1,4 +1,4 @@
-actions :create
+actions :create, :remove
 default_action :create
 
 attribute :superuser, :kind_of => String, :default => 'root'
