@@ -45,3 +45,7 @@ Wraps deploy resource but also:
 * Provides a **callback_before_deploy** block to be specified as custom ruby
   code to allow you to customize any need before deploying
 * Calls deploy resource
+
+## Helper `cespi_database`
+
+Preferred way to call `cespi_application_database`
