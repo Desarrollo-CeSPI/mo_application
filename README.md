@@ -1,51 +1,47 @@
 # cespi_application-cookbook
 
-TODO: Enter the cookbook description here.
-
-## Supported Platforms
-
-TODO: List your supported platforms.
-
-## Attributes
-
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['cespi_application']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
+LWRP for base application deployment. It provides helpers for creating:
+* Directory for application
+* Database
+* Deployment
+* User for application run
 
 ## Usage
 
-### cespi_application::default
+Just include this recipe as a dependency and use provided LWRPs:
 
-Include `cespi_application` in your node's `run_list`:
+### Resource `cespi_application_chroot`
 
-```json
-{
-  "run_list": [
-    "recipe[cespi_application::default]"
-  ]
-}
-```
+Creates or removes a chrooted directory. Usefull for **php-fpm** chrooted environments only. 
+Copied directories can be specified as parameter. Parameters are:
 
-## Contributing
+* **path**: base chroot directory
+* **copy_files**: files tobe copied to chroot (uses ldd to follow excecutable/library dependencies)
+* **actions**: create or remove
 
-1. Fork the repository on Github
-2. Create a named feature branch (i.e. `add-new-recipe`)
-3. Write your change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request
+### Resource `cespi_application_user`
 
-## License and Authors
+Creates user used to run application as. Parameters and actions can be seen in
+`resources/user.rb`
 
-Author:: YOUR_NAME (<YOUR_EMAIL>)
+### Resource `cespi_application_database`
+
+Creates or removes databases used by application. It wraps database cookbook. Paramters and actions can be seen in
+`resources/database.rb`, but we need to explain what are the following
+parameters:
+
+* **name:** database name. If user is ommited, name will be used
+* **applications_servers:** array of servers from where specified user can connect from
+
+It is also important to say that Mysql imposes a restriction with **user names**
+that must be less or equals to 16 characters. **Be careful when no user is
+specified and database name is greater than 16 characters length**
+
+### Resource `cespi_application_deploy`
+
+Wraps deploy resource but also:
+
+* Creates needed directories for shared environment
+* Provides a **callback_before_deploy** block to be specified as custom ruby
+  code to allow you to customize any need before deploying
+* Calls deploy resource
