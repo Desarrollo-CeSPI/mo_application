@@ -39,7 +39,7 @@ class CespiApplication
           path me.logrotate_application_logs
           options me.logrotate_options
           frequency 'weekly'
-          maxsize   '1M'
+          minsize   '1M'
           rotate    10
           create me.logrotate_permissions
           enable enable_flag
