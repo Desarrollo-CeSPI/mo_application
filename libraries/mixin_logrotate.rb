@@ -28,7 +28,7 @@ class CespiApplication
           path me.logrotate_service_logs
           options me.logrotate_options
           frequency 'weekly'
-          maxsize   '1M'
+          minsize   '1M'
           rotate    10
           create me.logrotate_permissions
           postrotate me.logrotate_postrotate if me.logrotate_postrotate
