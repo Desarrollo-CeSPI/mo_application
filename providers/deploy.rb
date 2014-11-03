@@ -1,4 +1,5 @@
 use_inline_resources
+include CespiApplication::Logrotate
 
 # Support whyrun
 def whyrun_supported?
@@ -30,6 +31,7 @@ def install
   create_directories
   instance_eval(&new_resource.callback_before_deploy) if new_resource.callback_before_deploy
   deploy_application
+  logrotate 
 end
 
 
@@ -94,8 +96,10 @@ def deploy_application
   end
 end
 
+
 def remove
   remove_directories
+  logrotate false
 end
 
 
