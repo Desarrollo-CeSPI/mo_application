@@ -1,4 +1,4 @@
-class CespiApplication
+class MoApplication
   module Logrotate
 
     def logrotate_service_logs
@@ -24,7 +24,7 @@ class CespiApplication
     def logrotate(enable_flag = true)
       run_context.include_recipe "logrotate"
       self.tap do |me|
-        logrotate_app "cespi-application-services-#{new_resource.name}" do
+        logrotate_app "mo-application-services-#{new_resource.name}" do
           path me.logrotate_service_logs
           options me.logrotate_options
           frequency 'weekly'
@@ -35,7 +35,7 @@ class CespiApplication
           enable enable_flag
         end unless logrotate_service_logs.empty?
 
-        logrotate_app "cespi-application-#{new_resource.name}" do
+        logrotate_app "mo-application-#{new_resource.name}" do
           path me.logrotate_application_logs
           options me.logrotate_options
           frequency 'weekly'

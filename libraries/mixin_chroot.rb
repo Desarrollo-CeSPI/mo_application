@@ -1,4 +1,4 @@
-class CespiApplication
+class MoApplication
   module ChrootResourceBase
     def self.included(klass)
       klass.actions :create, :remove

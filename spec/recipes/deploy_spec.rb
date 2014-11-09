@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe 'fake_deploy::create'do
   # Use an explicit subject
-  let(:chef_run) { chef_run_lwrp(:cespi_application_deploy).converge(described_recipe)  }
+  let(:chef_run) { chef_run_lwrp(:mo_application_deploy).converge(described_recipe)  }
 
   context "default_action" do
     it 'uses defaults' do
@@ -111,7 +111,7 @@ end
 
 describe 'fake_deploy::remove'do
   # Use an explicit subject
-  let(:chef_run) { chef_run_lwrp(:cespi_application_deploy).converge(described_recipe)  }
+  let(:chef_run) { chef_run_lwrp(:mo_application_deploy).converge(described_recipe)  }
 
   it 'removes path completely' do
     expect(chef_run).to delete_directory('/tmp/some_path_to_remove').with(recursive: true)

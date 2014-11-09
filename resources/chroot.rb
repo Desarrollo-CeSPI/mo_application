@@ -1,1 +1,1 @@
-include CespiApplication::ChrootResourceBase
+include MoApplication::ChrootResourceBase

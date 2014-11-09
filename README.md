@@ -1,4 +1,4 @@
-# cespi_application-cookbook
+# mo_application-cookbook
 
 LWRP for base application deployment. It provides helpers for creating:
 * Directory for application
@@ -10,7 +10,7 @@ LWRP for base application deployment. It provides helpers for creating:
 
 Just include this recipe as a dependency and use provided LWRPs:
 
-### Resource `cespi_application_chroot`
+### Resource `mo_application_chroot`
 
 Creates or removes a chrooted directory. Usefull for **php-fpm** chrooted environments only. 
 Copied directories can be specified as parameter. Parameters are:
@@ -19,12 +19,12 @@ Copied directories can be specified as parameter. Parameters are:
 * **copy_files**: files tobe copied to chroot (uses ldd to follow excecutable/library dependencies)
 * **actions**: create or remove
 
-### Resource `cespi_application_user`
+### Resource `mo_application_user`
 
 Creates user used to run application as. Parameters and actions can be seen in
 `resources/user.rb`
 
-### Resource `cespi_application_database`
+### Resource `mo_application_database`
 
 Creates or removes databases used by application. It wraps database cookbook. Paramters and actions can be seen in
 `resources/database.rb`, but we need to explain what are the following
@@ -37,7 +37,7 @@ It is also important to say that Mysql imposes a restriction with **user names**
 that must be less or equals to 16 characters. **Be careful when no user is
 specified and database name is greater than 16 characters length**
 
-### Resource `cespi_application_deploy`
+### Resource `mo_application_deploy`
 
 Wraps deploy resource but also:
 
@@ -46,6 +46,6 @@ Wraps deploy resource but also:
   code to allow you to customize any need before deploying
 * Calls deploy resource
 
-## Helper `cespi_database`
+## Helper `mo_database`
 
-Preferred way to call `cespi_application_database`
+Preferred way to call `mo_application_database`

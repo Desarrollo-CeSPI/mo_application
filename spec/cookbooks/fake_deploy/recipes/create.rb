@@ -1,9 +1,9 @@
-cespi_application_deploy 'default_action' do
+mo_application_deploy 'default_action' do
   path '/tmp/some_path'
   repo 'some repo'
 end
 
-cespi_application_deploy 'with_before_deploy' do
+mo_application_deploy 'with_before_deploy' do
   path '/tmp/some_other_path'
   repo 'some repo'
   before_deploy do
@@ -12,7 +12,7 @@ cespi_application_deploy 'with_before_deploy' do
   end
 end
 
-cespi_application_deploy 'with_shared_files_and_dirs' do
+mo_application_deploy 'with_shared_files_and_dirs' do
   path '/tmp/shared_test'
   repo 'some repo'
   shared_files('some_dir/config/databases.yml' => 'config/databases.yml')

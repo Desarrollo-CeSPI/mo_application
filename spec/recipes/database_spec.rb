@@ -4,7 +4,7 @@ describe 'fake_database::create'do
   let(:mysql_super_password) { 'sakjdhi12' }
   # Use an explicit subject
   let(:chef_run) do
-    chef_run_lwrp(:cespi_application_database) do |node|
+    chef_run_lwrp(:mo_application_database) do |node|
       node.set['mysql']['server_root_password'] = mysql_super_password
     end.converge(described_recipe)
   end

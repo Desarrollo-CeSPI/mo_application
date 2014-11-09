@@ -1,6 +1,6 @@
 # 0.1.0
 
-Initial release of cespi_application
+Initial release of mo_application
 
 * Enhancements
   * an enhancement

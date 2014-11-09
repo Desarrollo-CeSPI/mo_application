@@ -1,3 +1,3 @@
-cespi_application_user 'testuser' do
+mo_application_user 'testuser' do
   action :remove
 end

@@ -1,5 +1,5 @@
 use_inline_resources
-include CespiApplication::Logrotate
+include MoApplication::Logrotate
 
 # Support whyrun
 def whyrun_supported?

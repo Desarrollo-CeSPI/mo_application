@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 describe 'fake_user::create'do
   # Use an explicit subject
-  let(:chef_run) { chef_run_lwrp(:cespi_application_user).converge(described_recipe)  }
+  let(:chef_run) { chef_run_lwrp(:mo_application_user).converge(described_recipe)  }
 
   it 'set defaults' do
     expect(chef_run).to create_group('user_default')
@@ -35,7 +35,7 @@ end
 
 describe 'fake_user::remove'do
   # Use an explicit subject
-  let(:chef_run) { chef_run_lwrp(:cespi_application_user).converge(described_recipe)  }
+  let(:chef_run) { chef_run_lwrp(:mo_application_user).converge(described_recipe)  }
 
   it 'removes group and user defaults' do
     expect(chef_run).to remove_user('testuser').with(supports: { manage_home: true})

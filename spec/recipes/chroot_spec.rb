@@ -5,8 +5,8 @@ describe 'fake_chroot::create'do
   # Use an explicit subject
   let(:chef_run) do 
     shell_out_ldd_error = double("Shell Out ldd command", :error? => true)
-    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do
-      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
+    chef_run_lwrp(:mo_application_chroot).converge(described_recipe) do
+      allow_any_instance_of(Chef::Provider::MoApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
     end
   end
   let(:base) { '/tmp/default_chroot' }
@@ -41,9 +41,9 @@ describe 'fake_chroot::create_with_files'do
   let(:chef_run) do 
     shell_out_ldd_error = double("Shell Out ldd command", :error? => true)
     shell_out_ldd_bin_bash = double("Shell Out ldd /bin/bash command", :error? => false, :stdout => ldd_bin_bash)
-    chef_run_lwrp(:cespi_application_chroot).converge(described_recipe) do |node|
-      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
-      allow_any_instance_of(Chef::Provider::CespiApplicationChroot).to receive(:shell_out).with(/^ldd \/bin\/bash/).and_return shell_out_ldd_bin_bash
+    chef_run_lwrp(:mo_application_chroot).converge(described_recipe) do |node|
+      allow_any_instance_of(Chef::Provider::MoApplicationChroot).to receive(:shell_out).with(/^ldd .*/).and_return shell_out_ldd_error
+      allow_any_instance_of(Chef::Provider::MoApplicationChroot).to receive(:shell_out).with(/^ldd \/bin\/bash/).and_return shell_out_ldd_bin_bash
     end
   end
 
@@ -78,7 +78,7 @@ end
 
 describe 'fake_chroot::remove'do
   let(:base) { '/tmp/chroot_to_remove' }
-  let(:chef_run) { chef_run_lwrp(:cespi_application_chroot).converge(described_recipe)  }
+  let(:chef_run) { chef_run_lwrp(:mo_application_chroot).converge(described_recipe)  }
   it 'removes directory' do
     expect(chef_run).to delete_directory(base).with(recursive: true)
   end
