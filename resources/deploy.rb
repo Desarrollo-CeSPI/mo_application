@@ -14,6 +14,7 @@ attribute :shared_files, :kind_of => Hash, :default => Hash.new
 attribute :create_dirs_before_symlink, :kind_of => Array, :default => []
 attribute :force_deploy, :kind_of => [TrueClass,FalseClass], :default => false
 attribute :log_dir, :kind_of => String, :default => 'log'
+attribute :ssh_wrapper, :kind_of => String
 
 attr_reader :callback_before_deploy
 

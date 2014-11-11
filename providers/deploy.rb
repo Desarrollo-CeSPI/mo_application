@@ -92,6 +92,7 @@ def deploy_application
     group new_resource.group
     migrate new_resource.migrate
     migration_command new_resource.migration_command
+    ssh_wrapper new_resource.ssh_wrapper || node['mo_application']['ssh_wrapper']
     action (new_resource.force_deploy ? :force_deploy : :deploy)
   end
 end
