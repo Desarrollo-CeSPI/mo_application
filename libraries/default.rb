@@ -6,3 +6,9 @@ def mo_database(data)
     action :remove if data['database']['remove']
   end
 end
+
+def mo_data_bag_for_environment(bag, id)
+  Chef::Log.debug "Loading data bag item #{bag}/#{id} for environment #{node.chef_environment}"
+  data = data_bag_item(bag, id)
+  data[node.chef_environment]
+end
