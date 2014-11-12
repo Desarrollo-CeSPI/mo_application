@@ -8,13 +8,13 @@ def mo_database(data)
 end
 
 def mo_data_bag_for_environment(bag, id)
-  Chef::Log.debug "Loading data bag item #{bag}/#{id}"
+  Chef::Log.info "Loading data bag item #{bag}/#{id}"
   data = data_bag_item(bag, id)
   if data[node.chef_environment]
-    Chef::Log.debug "Using #{node.chef_environment} as the key"
+    Chef::Log.info "Using #{node.chef_environment} as the key"
     data[node.chef_environment]
   else
-    Chef::Log.debug "#{node.chef_environment} key does not exist, using `default`"
+    Chef::Log.error "#{node.chef_environment} key does not exist, using `default`"
     data['default']
   end
 end
