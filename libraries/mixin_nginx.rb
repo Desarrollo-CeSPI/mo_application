@@ -22,7 +22,7 @@ class MoApplication
     end
 
     def nginx_document_root(relative_path)
-      ::File.join new_resource.path
+      ::File.join new_resource.path, relative_path
     end
 
     def nginx_options_for(action, name, options)
