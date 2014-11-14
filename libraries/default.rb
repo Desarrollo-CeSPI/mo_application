@@ -18,3 +18,32 @@ def mo_data_bag_for_environment(bag, id)
     data['default']
   end
 end
+
+def mo_testing_apps_from_databag(bag, id)
+
+  data = data_bag_item(bag, id)
+
+  data['applications'].each do |name, values|
+
+    yield name, values if block_given?
+
+    db = values['databases'] && values['databases'].first
+
+    if db
+      template "/home/#{values['user'] || name}/.my.cnf" do
+        owner values['user'] || name
+        source 'my.cnf.erb'
+        variables(username: db['username'] || db['name'],
+                  password: db['password'],
+                  host: db['host'])
+        not_if { values['remove'] }
+      end
+
+      values['databases'].each do | database |
+        mo_database 'database' => database.merge('remove' => values['remove'])
+      end
+    end
+
+  end
+
+end

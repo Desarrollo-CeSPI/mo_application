@@ -10,6 +10,7 @@ class MoApplication
       klass.attribute :ssh_keys, :kind_of => Array, :default => []
 
       # Deploy needs
+      klass.attribute :path, :kind_of => String, required: true
       klass.attribute :name, :kind_of => String, :name_attribute => true
       klass.attribute :deploy, :kind_of => [TrueClass, FalseClass], :default => true
       klass.attribute :user, :kind_of => [String, NilClass], :default => nil
