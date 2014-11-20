@@ -25,6 +25,8 @@ def mo_testing_apps_from_databag(bag, id)
 
   data['applications'].each do |name, values|
 
+    values['keys'] = Array(values['keys']) + Array(node['mo_application']['testing']['ssh_keys'])
+
     yield name, values if block_given?
 
     db = values['databases'] && values['databases'].first
