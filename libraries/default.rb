@@ -25,7 +25,11 @@ def mo_apps_from_databag(bag, id, applications_bag)
 
   data['applications'].each do |name|
     values = mo_data_bag_for_environment applications_bag, name
-    yield name, values if block_given?
+    if values.nil?
+      Chef::Log.error "No values find for Applications databag #{applications_bag} item #{name}"
+    else
+      yield name, values if block_given?
+    end
   end
 
 end
