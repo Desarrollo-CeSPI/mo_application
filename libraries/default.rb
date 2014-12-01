@@ -2,7 +2,7 @@ def mo_database(data)
   mo_application_database data['database']['name'] do
     username data['database']['username']
     password data['database']['password']
-    application_servers data['database']['application_servers']
+    application_servers data['application_servers']
     action :remove if data['database']['remove']
   end
 end
@@ -42,7 +42,8 @@ def mo_testing_apps_from_databag(bag, id)
       end
 
       values['databases'].each do | database |
-        mo_database 'database' => database.merge('remove' => values['remove'])
+        mo_database 'database' => database.merge('remove' => values['remove']), 
+                    'application_servers' => values['application_servers']
       end
     end
 
