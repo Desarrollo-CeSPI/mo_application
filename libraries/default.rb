@@ -19,14 +19,20 @@ def mo_data_bag_for_environment(bag, id)
   end
 end
 
-def mo_testing_apps_from_databag(bag, id, applications_bag)
+def mo_apps_from_databag(bag, id, applications_bag)
 
   data = data_bag_item(bag, id)
 
   data['applications'].each do |name|
-
     values = mo_data_bag_for_environment applications_bag, name
+    yield name, values if block_given?
+  end
 
+end
+
+def mo_testing_apps_from_databag(bag, id, applications_bag)
+
+  mo_apps_from_databag(bag, id, applications_bag) do |name, values|
     values['keys'] = Array(values['keys']) + Array(node['mo_application']['testing']['ssh_keys'])
 
     yield name, values if block_given?
@@ -49,7 +55,5 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
                     'application_servers' => values['application_servers']
       end
     end
-
   end
-
 end
