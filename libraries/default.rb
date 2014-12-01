@@ -19,11 +19,13 @@ def mo_data_bag_for_environment(bag, id)
   end
 end
 
-def mo_testing_apps_from_databag(bag, id)
+def mo_testing_apps_from_databag(bag, id, applications_bag)
 
   data = data_bag_item(bag, id)
 
-  data['applications'].each do |name, values|
+  data['applications'].each do |name|
+
+    values = mo_data_bag_for_environment applications_bag, name
 
     values['keys'] = Array(values['keys']) + Array(node['mo_application']['testing']['ssh_keys'])
 
@@ -32,7 +34,8 @@ def mo_testing_apps_from_databag(bag, id)
     db = values['databases'] && values['databases'].first
 
     if db
-      template "/home/#{values['user'] || name}/.my.cnf" do
+      template "users database conf for #{values['user'] || name}" do
+        path lazy { ::File.join(::Dir.home(user),".my.cnf" ) }
         owner values['user'] || name
         source 'my.cnf.erb'
         variables(username: db['username'] || db['name'],
