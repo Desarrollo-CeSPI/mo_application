@@ -21,10 +21,6 @@ action :remove do
   end
 end
 
-def application_template(name, &block)
-  template(::File.join(new_resource.path,'shared', name),&block)
-end
-
 private
 
 def install

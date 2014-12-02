@@ -1,3 +1,15 @@
+def mo_application_shared_template(name, &block)
+    directory ::File.join(new_resource.path,'shared') do
+      owner new_resource.user
+      group new_resource.group
+      recursive true
+    end
+    template(::File.join(new_resource.path,'shared', name),&block).tap do |t|
+      t.owner new_resource.user
+      t.group new_resource.group
+    end
+end
+
 def mo_database(data)
   mo_application_database data['database']['name'] do
     username data['database']['username']
