@@ -49,3 +49,8 @@ Wraps deploy resource but also:
 ## Helper `mo_database`
 
 Preferred way to call `mo_application_database`
+
+## License and Authors
+
+* Author:: Christian Rodriguez (chrodriguez@gmail.com)
+* Author:: Leandro Di Tommaso (leandro.ditommaso@mikroways.net)
