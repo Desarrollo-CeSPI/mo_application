@@ -1,13 +1,20 @@
 def mo_application_shared_template(name, &block)
-    directory ::File.join(new_resource.path,'shared') do
+  begin
+  shared_dir = ::File.join(new_resource.path,'shared')
+  run_context.resource_collection.find("directory[#{shared_dir}]")
+  rescue Chef::Exceptions::ResourceNotFound
+    # If shared directory is not created, we created for the first call
+    directory shared_dir do
       owner new_resource.user
       group new_resource.group
       recursive true
     end
-    template(::File.join(new_resource.path,'shared', name),&block).tap do |t|
-      t.owner new_resource.user
-      t.group new_resource.group
-    end
+  end
+
+  template(::File.join(shared_dir, name),&block).tap do |t|
+    t.owner new_resource.user
+    t.group new_resource.group
+  end
 end
 
 def mo_database(data)
