@@ -68,6 +68,10 @@ class MoApplication
           action    :create
         end
 
+        service 'nginx' do
+          action   :nothing
+        end
+
         nginx_conf_file name do
           action conf['action']
           block conf['block']
