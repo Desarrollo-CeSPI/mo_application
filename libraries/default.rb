@@ -12,7 +12,7 @@ def mo_application_shared_template(name, &block)
   end
 
   template(::File.join(shared_dir, name),&block).tap do |t|
-    t.source name
+    t.source "#{name}.erb"
     t.owner new_resource.user
     t.group new_resource.group
   end
@@ -80,4 +80,15 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
       end
     end
   end
+end
+
+def mo_application_from_data_bag(cookbook_name)
+  # Overwritten data from databag
+  data = mo_data_bag_for_environment node[cookbook_name]['databag'], node[cookbook_name]['id']
+
+  # Deployment ssh_provate_key
+  data.merge! encrypted_data_bag_item_for_environment(node[cookbook_name]['deployment_databag'],
+                                                      node[cookbook_name]['ssh_private_key_databag_item'])
+  # Mixin attributes
+  Chef::Mixin::DeepMerge.deep_merge!(data, node[cookbook_name].to_hash)
 end
