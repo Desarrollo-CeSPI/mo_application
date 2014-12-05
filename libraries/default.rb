@@ -12,6 +12,7 @@ def mo_application_shared_template(name, &block)
   end
 
   template(::File.join(shared_dir, name),&block).tap do |t|
+    t.source name
     t.owner new_resource.user
     t.group new_resource.group
   end
