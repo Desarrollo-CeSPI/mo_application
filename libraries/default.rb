@@ -54,6 +54,20 @@ def mo_apps_from_databag(bag, id, applications_bag)
 
 end
 
+def setup_dotenv(data)
+  if data['user'] && data['database']
+    template "users database conf for #{data['user']}" do
+      path lazy { ::File.join(::Dir.home(data['user']),".my.cnf" ) }
+      owner data['user']
+      source 'my.cnf.erb'
+      cookbook 'mo_application'
+      variables(username: data['database']['username'],
+                password: data['database']['password'],
+                host: data['database']['host'])
+    end
+  end
+end
+
 def mo_testing_apps_from_databag(bag, id, applications_bag)
 
   mo_apps_from_databag(bag, id, applications_bag) do |name, values|
@@ -68,6 +82,7 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
         path lazy { ::File.join(::Dir.home(user),".my.cnf" ) }
         owner values['user'] || name
         source 'my.cnf.erb'
+        cookbook 'mo_application'
         variables(username: db['username'] || db['name'],
                   password: db['password'],
                   host: db['host'])
