@@ -97,13 +97,19 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
   end
 end
 
-def mo_application_from_data_bag(cookbook_name)
+def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
   # Overwritten data from databag
   data = mo_data_bag_for_environment node[cookbook_name]['databag'], node[cookbook_name]['id']
 
-  # Deployment ssh_provate_key
-  data.merge! encrypted_data_bag_item_for_environment(node[cookbook_name]['deployment_databag'],
-                                                      node[cookbook_name]['ssh_private_key_databag_item'])
+  # Deployment ssh_private_key
+  if ssh_private_key && !node[cookbook_name]['ssh_private_key']
+    data.merge! encrypted_data_bag_item_for_environment(node[cookbook_name]['deployment_databag'],
+                                                        node[cookbook_name]['ssh_private_key_databag_item'])
+  end
   # Mixin attributes
   Chef::Mixin::DeepMerge.deep_merge!(data, node[cookbook_name].to_hash)
+end
+
+def mo_application_database_from_data_bag(cookbook_name)
+  mo_application_from_data_bag(cookbook_name, false)
 end
