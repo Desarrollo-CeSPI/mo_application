@@ -29,13 +29,16 @@ end
 
 def mo_data_bag_for_environment(bag, id)
   Chef::Log.info "Loading data bag item #{bag}/#{id}"
-  data = data_bag_item(bag, id)
+  data = data_bag_item(bag, id) rescue Hash.new
   if data[node.chef_environment]
     Chef::Log.info "Using #{node.chef_environment} as the key"
     data[node.chef_environment]
-  else
+  elsif data['default']
     Chef::Log.error "#{node.chef_environment} key does not exist, using `default`"
-    data['default']
+    data['default'] 
+  else
+    Chef::Log.error "Data bag #{bag}/#{id} does not exists. Returning empty Hash!"
+    Hash.new
   end
 end
 
