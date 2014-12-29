@@ -19,11 +19,14 @@ def mo_application_shared_template(name, &block)
 end
 
 def mo_database(data)
-  mo_application_database data['database']['name'] do
-    username data['database']['username']
-    password data['database']['password']
-    application_servers data['application_servers']
-    action :remove if data['database']['remove']
+  run_context.include_recipe "database::mysql"
+  data['databases'].each do | database |
+    mo_application_database database['name'] do
+      username database['username']
+      password database['password']
+      application_servers data['application_servers']
+      action :remove if database['remove']
+    end
   end
 end
 
@@ -58,15 +61,18 @@ def mo_apps_from_databag(bag, id, applications_bag)
 end
 
 def setup_dotenv(data)
-  if data['user'] && data['database']
-    template "users database conf for #{data['user']}" do
-      path lazy { ::File.join(::Dir.home(data['user']),".my.cnf" ) }
-      owner data['user']
-      source 'my.cnf.erb'
-      cookbook 'mo_application'
-      variables(username: data['database']['username'],
-                password: data['database']['password'],
-                host: data['database']['host'])
+  if data['user'] && data['databases']
+    db = data['databases'] && data['databases'].first
+    if db
+      template "users database conf for #{data['user']}" do
+        path lazy { ::File.join(::Dir.home(data['user']),".my.cnf" ) }
+        owner data['user']
+        source 'my.cnf.erb'
+        cookbook 'mo_application'
+        variables(username: db['username'],
+                  password: db['password'],
+                  host: db['host'])
+      end
     end
   end
 end
@@ -75,28 +81,14 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
 
   mo_apps_from_databag(bag, id, applications_bag) do |name, values|
     values['keys'] = Array(values['keys']) + Array(node['mo_application']['testing']['ssh_keys'])
+    values['user'] ||= name
+    values['group'] ||= name
 
     yield name, values if block_given?
 
-    db = values['databases'] && values['databases'].first
+    setup_dotenv values
+    mo_database values
 
-    if db
-      template "users database conf for #{values['user'] || name}" do
-        path lazy { ::File.join(::Dir.home(user),".my.cnf" ) }
-        owner values['user'] || name
-        source 'my.cnf.erb'
-        cookbook 'mo_application'
-        variables(username: db['username'] || db['name'],
-                  password: db['password'],
-                  host: db['host'])
-        not_if { values['remove'] }
-      end
-
-      values['databases'].each do | database |
-        mo_database 'database' => database.merge('remove' => values['remove']), 
-                    'application_servers' => values['application_servers']
-      end
-    end
   end
 end
 

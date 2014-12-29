@@ -10,7 +10,6 @@ end
 # Create a database and grants privileges to it
 action :create do
   converge_by("Create #{ @new_resource }") do
-    include_recipe "database::mysql"
     create_database
     grant_privileges
   end
@@ -18,7 +17,6 @@ end
 
 action :remove do
   converge_by("Remove #{ @new_resource }") do
-    include_recipe "database::mysql"
     drop_database
     drop_user
   end
