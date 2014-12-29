@@ -69,9 +69,9 @@ def setup_dotenv(data)
         owner data['user']
         source 'my.cnf.erb'
         cookbook 'mo_application'
-        variables(username: db['username'],
+        variables(username: db['username'] || db['name'],
                   password: db['password'],
-                  host: db['host'])
+                  host: db['host'] || 'localhost')
       end
     end
   end
