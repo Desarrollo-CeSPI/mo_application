@@ -62,7 +62,7 @@ end
 
 def setup_dotenv(data)
   if data['user'] && data['databases']
-    db = data['databases'] && data['databases'].first
+    _,db = data['databases'] && data['databases'].first
     if db
       template "users database conf for #{data['user']}" do
         path lazy { ::File.join(::Dir.home(data['user']),".my.cnf" ) }
