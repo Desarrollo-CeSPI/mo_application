@@ -20,7 +20,7 @@ end
 
 def mo_database(data)
   run_context.include_recipe "database::mysql"
-  Array(data['databases']).each do | database |
+  (data['databases'] || Hash.new).each do | name, database |
     mo_application_database database['name'] do
       username database['username']
       password database['password']
