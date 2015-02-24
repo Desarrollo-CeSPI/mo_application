@@ -31,7 +31,7 @@ def mo_database(data)
 end
 
 def mo_data_bag_for_environment(bag, id)
-  Chef::Log.info "Loading data bag item #{bag}/#{id}"
+  Chef::Log.info "Loading data bag item [#{bag}/#{id}]"
   data = data_bag_item(bag, id) rescue Hash.new
   if data[node.chef_environment]
     Chef::Log.info "Using #{node.chef_environment} as the key"
@@ -92,9 +92,11 @@ def mo_testing_apps_from_databag(bag, id, applications_bag)
   end
 end
 
-def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
+def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true)
   # Overwritten data from databag
-  data = mo_data_bag_for_environment node[cookbook_name]['databag'], node[cookbook_name]['id']
+  data = mo_data_bag_for_environment node[cookbook_name]['databag'], id
+
+  yield(data) if block_given? #This allows to validate data bags
 
   # Deployment ssh_private_key
   if ssh_private_key && !node[cookbook_name]['ssh_private_key']
@@ -103,6 +105,22 @@ def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
   end
   # Mixin attributes
   Chef::Mixin::DeepMerge.deep_merge!(data, node[cookbook_name].to_hash)
+end
+
+def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
+  _mo_application_from_data_bag cookbook_name, node[cookbook_name]['id'], ssh_private_key
+end
+
+def mo_multiples_applications_from_data_bag(cookbook_name, ssh_private_key = true, &block)
+  Array(node[cookbook_name]['application_ids']).each do |app|
+    data = _mo_application_from_data_bag cookbook_name, app, ssh_private_key do |bag|
+      %w(user group path).each do |key|
+        raise "Application databag item #{app} does not include #{key} key. Using default in multiple environment is bad" unless bag[key]
+      end
+    end
+    data['id'] = app
+    block.call data
+  end
 end
 
 def mo_application_database_from_data_bag(cookbook_name)
