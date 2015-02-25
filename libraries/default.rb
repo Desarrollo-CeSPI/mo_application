@@ -112,7 +112,7 @@ def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
 end
 
 def mo_multiples_applications_from_data_bag(cookbook_name, ssh_private_key = true, &block)
-  Array(node[cookbook_name]['application_ids']).each do |app|
+  mo_data_bag_for_environment(node[cookbook_name]['multiple']['databag'], node[cookbook_name]['multiple']['id']).each do |app|
     data = _mo_application_from_data_bag cookbook_name, app, ssh_private_key do |bag|
       %w(user group path).each do |key|
         raise "Application databag item #{app} does not include #{key} key. Using default in multiple environment is bad" unless bag[key]
