@@ -8,3 +8,22 @@ default['nginx']['server_names_hash_bucket_size'] = 128
 default['nginx']['server_tokens'] = 'off'
 default['nginx']['client_max_body_size'] = '20m'
 default['nginx']['client_body_buffer_size'] = '128k'
+
+
+default['mo_application']['mo_backup']['user'] = 'root'
+default['mo_application']['mo_backup']['database']['mysql']['username'] = 'backup'
+default['mo_application']['mo_backup']['database']['mysql']['password'] = 'backup_pass'
+default['mo_application']['mo_backup']['archive']['use_sudo'] = false
+default['mo_application']['mo_backup']['compress'] = true
+default['mo_application']['mo_backup']['encryptor'] = "encryptor_databag_item"
+default['mo_application']['mo_backup']['storages'] = []
+# Sample storage data:
+# default['mo_application']['mo_backup']['storages'] = [ { "id": "sftp1" } ]
+
+default['mo_application']['mo_backup']['mail'] = []
+# Sample mail data:
+# default['mo_application']['mo_backup']['mail'] =  {
+#   "mail_id": "mail_databag_item",
+#   "on_success": "false",
+#   "from": "user@domain.tld"
+# }

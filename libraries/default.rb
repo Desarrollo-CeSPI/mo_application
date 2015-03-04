@@ -129,7 +129,10 @@ def mo_application_database_from_data_bag(cookbook_name)
 end
 
 def mo_application_backup(cookbook_name)
-  mo_application_from_data_bag(cookbook_name,false).merge!(user: node['mo_application']['mo_backup']['user']).tap do |data|
+  mo_application_from_data_bag(cookbook_name,false).tap do |data|
+    data['backup'] ||= Hash.new
+
+    data.merge!(user: node['mo_application']['mo_backup']['user'])
     # Foreach database replace user and password to make backups with required grants
     data['databases'].each do |name, db_data|
       db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][data['type']]['username']
@@ -147,6 +150,8 @@ def mo_application_backup(cookbook_name)
     data['backup']['archive']['add'].uniq!
     data['backup']['archive']['use_sudo'] = node['mo_application']['mo_backup']['archive']['use_sudo'] if data['backup']['archive']['use_sudo'].nil?
     data['backup']['compress'] = node['mo_application']['mo_backup']['compress'] if data['backup']['compress'].nil?
-    data['backup']['encryptor'] = node['mo_application']['mo_backup']['compress'] if data['backup']['compress'].nil?
+    data['backup']['encryptor'] ||= node['mo_application']['mo_backup']['encryptor']
+    data['backup']['storages'] ||= node['mo_application']['mo_backup']['storages']
+    data['backup']['mail'] ||= node['mo_application']['mo_backup']['mail']
   end
 end
