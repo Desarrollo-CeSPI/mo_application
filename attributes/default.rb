@@ -13,6 +13,7 @@ default['nginx']['client_body_buffer_size'] = '128k'
 default['mo_application']['mo_backup']['user'] = 'root'
 default['mo_application']['mo_backup']['database']['mysql']['username'] = 'backup'
 default['mo_application']['mo_backup']['database']['mysql']['password'] = 'backup_pass'
+default['mo_application']['mo_backup']['database']['mysql']['additional_options'] = ["--single-transaction", "--flush-logs", "--master-data=2", "--quick"]
 default['mo_application']['mo_backup']['archive']['use_sudo'] = false
 default['mo_application']['mo_backup']['compress'] = true
 

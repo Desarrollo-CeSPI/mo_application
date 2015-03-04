@@ -139,6 +139,7 @@ def mo_application_backup(cookbook_name)
     data['databases'].each do |name, db_data|
       db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][db_data['type']]['username']
       db_data['password'] = db_data['backup_password'] || node['mo_application']['mo_backup']['database'][db_data['type']]['password']
+      db_data['additional_options'] ||= node['mo_application']['mo_backup']['database'][db_data['type']]['additional_options']
     end
     # Backup all databases if not specify which ones to backup
     data['backup']['databases'] ||= data['databases'].keys
