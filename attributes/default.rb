@@ -15,7 +15,10 @@ default['mo_application']['mo_backup']['database']['mysql']['username'] = 'backu
 default['mo_application']['mo_backup']['database']['mysql']['password'] = 'backup_pass'
 default['mo_application']['mo_backup']['archive']['use_sudo'] = false
 default['mo_application']['mo_backup']['compress'] = true
-default['mo_application']['mo_backup']['encryptor'] = "encryptor_databag_item"
+
+# Not used
+#default['mo_application']['mo_backup']['encryptor'] = "encryptor_databag_item"
+
 default['mo_application']['mo_backup']['storages'] = []
 # Sample storage data:
 # default['mo_application']['mo_backup']['storages'] = [ { "id": "sftp1" } ]
