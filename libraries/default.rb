@@ -132,16 +132,19 @@ def mo_application_backup(cookbook_name)
   mo_application_from_data_bag(cookbook_name,false).tap do |data|
     data['backup'] ||= Hash.new
 
+    data['backup']['user'] ||= node['mo_application']['mo_backup']['user']
+
     data.merge!(user: node['mo_application']['mo_backup']['user'])
     # Foreach database replace user and password to make backups with required grants
     data['databases'].each do |name, db_data|
-      db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][data['type']]['username']
-      db_data['password'] = db_data['backup_password'] || node['mo_application']['mo_backup']['database'][data['type']]['password']
+      db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][db_data['type']]['username']
+      db_data['password'] = db_data['backup_password'] || node['mo_application']['mo_backup']['database'][db_data['type']]['password']
     end
     # Backup all databases if not specify which ones to backup
     data['backup']['databases'] ||= data['databases'].keys
 
     # If backup root is not set, add applications default root path
+    data['backup']['archive'] ||= Hash.new
     data['backup']['archive']['add'] ||= []
     data['backup']['archive']['add'] << ::File.join(data['path'],'log')
     (data['shared_dirs'] || Hash.new).each do |shared_dir,_|
@@ -155,3 +158,4 @@ def mo_application_backup(cookbook_name)
     data['backup']['mail'] ||= node['mo_application']['mo_backup']['mail']
   end
 end
+

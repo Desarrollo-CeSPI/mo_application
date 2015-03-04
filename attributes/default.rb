@@ -20,7 +20,7 @@ default['mo_application']['mo_backup']['storages'] = []
 # Sample storage data:
 # default['mo_application']['mo_backup']['storages'] = [ { "id": "sftp1" } ]
 
-default['mo_application']['mo_backup']['mail'] = []
+default['mo_application']['mo_backup']['mail'] = {}
 # Sample mail data:
 # default['mo_application']['mo_backup']['mail'] =  {
 #   "mail_id": "mail_databag_item",
