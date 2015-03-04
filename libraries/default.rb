@@ -30,6 +30,7 @@ def mo_database(data)
   end
 end
 
+
 def mo_data_bag_for_environment(bag, id)
   Chef::Log.info "Loading data bag item [#{bag}/#{id}]"
   data = data_bag_item(bag, id) rescue Hash.new
@@ -125,4 +126,27 @@ end
 
 def mo_application_database_from_data_bag(cookbook_name)
   mo_application_from_data_bag(cookbook_name, false)
+end
+
+def mo_application_backup(cookbook_name)
+  mo_application_from_data_bag(cookbook_name,false).merge!(user: node['mo_application']['mo_backup']['user']).tap do |data|
+    # Foreach database replace user and password to make backups with required grants
+    data['databases'].each do |name, db_data|
+      db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][data['type']]['username']
+      db_data['password'] = db_data['backup_password'] || node['mo_application']['mo_backup']['database'][data['type']]['password']
+    end
+    # Backup all databases if not specify which ones to backup
+    data['backup']['databases'] ||= data['databases'].keys
+
+    # If backup root is not set, add applications default root path
+    data['backup']['archive']['add'] ||= []
+    data['backup']['archive']['add'] << ::File.join(data['path'],'log')
+    (data['shared_dirs'] || Hash.new).each do |shared_dir,_|
+      data['backup']['archive']['add'] << ::File.join(data['path'],'shared', shared_dir)
+    end
+    data['backup']['archive']['add'].uniq!
+    data['backup']['archive']['use_sudo'] = node['mo_application']['mo_backup']['archive']['use_sudo'] if data['backup']['archive']['use_sudo'].nil?
+    data['backup']['compress'] = node['mo_application']['mo_backup']['compress'] if data['backup']['compress'].nil?
+    data['backup']['encryptor'] = node['mo_application']['mo_backup']['compress'] if data['backup']['compress'].nil?
+  end
 end
