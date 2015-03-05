@@ -154,7 +154,7 @@ def apply_mo_backup_defaults(d)
     data['backup']['archive']['add'] ||= []
     data['backup']['archive']['add'] << ::File.join(data['path'],'log')
     (data['shared_dirs'] || Hash.new).each do |shared_dir,_|
-      data['backup']['archive']['add'] << ::File.join(data['path'],'shared', shared_dir)
+      data['backup']['archive']['add'] << ::File.join(data['path'],'app','shared', shared_dir)
     end
     data['backup']['archive']['add'].uniq!
     data['backup']['archive']['use_sudo'] = node['mo_application']['mo_backup']['archive']['use_sudo'] if data['backup']['archive']['use_sudo'].nil?
