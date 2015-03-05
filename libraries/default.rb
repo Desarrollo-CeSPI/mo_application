@@ -141,6 +141,7 @@ def apply_mo_backup_defaults(d)
     data.merge!(user: node['mo_application']['mo_backup']['user'])
     # Foreach database replace user and password to make backups with required grants
     data['databases'].each do |name, db_data|
+      raise "DB Type is not specified at #{name}." unless db_data['type']
       db_data['username'] = db_data['backup_username'] || node['mo_application']['mo_backup']['database'][db_data['type']]['username']
       db_data['password'] = db_data['backup_password'] || node['mo_application']['mo_backup']['database'][db_data['type']]['password']
       db_data['additional_options'] ||= node['mo_application']['mo_backup']['database'][db_data['type']]['additional_options']
