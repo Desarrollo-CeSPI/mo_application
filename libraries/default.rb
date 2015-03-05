@@ -129,7 +129,11 @@ def mo_application_database_from_data_bag(cookbook_name)
 end
 
 def mo_application_backup(cookbook_name)
-  mo_application_from_data_bag(cookbook_name,false).tap do |data|
+  apply_mo_backup_defaults mo_application_from_data_bag(cookbook_name,false)
+end
+
+def apply_mo_backup_defaults(d)
+  d.tap do |data|
     data['backup'] ||= Hash.new
 
     data['backup']['user'] ||= node['mo_application']['mo_backup']['user']
@@ -159,4 +163,3 @@ def mo_application_backup(cookbook_name)
     data['backup']['mail'] ||= node['mo_application']['mo_backup']['mail']
   end
 end
-
