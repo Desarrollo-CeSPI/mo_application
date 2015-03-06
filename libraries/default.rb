@@ -81,7 +81,8 @@ end
 def mo_testing_apps_from_databag(bag, id, applications_bag)
 
   mo_apps_from_databag(bag, id, applications_bag) do |name, values|
-    values['keys'] = Array(values['keys']) + Array(node['mo_application']['testing']['ssh_keys'])
+    values['keys'] = Array(values['keys']) + Array(node['mo_application']['ssh_keys'])
+    values['keys'].uniq!
     values['user'] ||= name
     values['group'] ||= name
 
@@ -96,6 +97,9 @@ end
 def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true)
   # Overwritten data from databag
   data = mo_data_bag_for_environment node[cookbook_name]['databag'], id
+
+  data['ssh_keys'] = Array(data['ssh_keys']) + Array(node['mo_application']['ssh_keys'])
+  data['ssh_keys'].uniq!
 
   yield(data) if block_given? #This allows to validate data bags
 
