@@ -62,7 +62,8 @@ def mo_apps_from_databag(bag, id, applications_bag)
 end
 
 def setup_dotenv(data)
-  if data['user'] && data['databases']
+  return if data['remove']||data['action'] == 'remove'
+  if data['user'] && data['databases'] 
     _,db = data['databases'] && data['databases'].first
     if db
       template "users database conf for #{data['user']}" do
