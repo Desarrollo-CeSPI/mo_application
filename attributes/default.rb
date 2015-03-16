@@ -17,7 +17,7 @@ default['mo_application']['backup']['database']['mysql']['additional_options'] =
 # Data bags used for backups. They must be encrypted
 default['mo_application']['backup']['storages_databag'] = "backup_storages"
 default['mo_application']['backup']['syncers_databag'] = "backup_syncers"
-default['mo_application']['backup']['notifiers_databag'] = "backup_syncers"
+default['mo_application']['backup']['notifiers_databag'] = "backup_notifiers"
 
 # Array of backup storages databag items within node[mo_application][backup][storages_databag] databaga
 default['mo_application']['backup']['storages'] = []
