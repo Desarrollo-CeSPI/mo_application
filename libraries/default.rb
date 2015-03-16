@@ -147,6 +147,7 @@ end
 
 def mo_application_backup(data)
   data['backup'] ||= Hash.new
+  data['backup']['user'] ||= backup_default_user(data)
   data['backup']['archives'] ||= backup_shared_archives(data)
   data['backup']['databases'] ||= backup_databases(data)
   data['backup']['storages'] ||= backup_default_storages
@@ -159,23 +160,27 @@ def mo_application_backup(data)
     databases data['backup']['databases']
     storages  data['backup']['storages']
     notifiers data['backup']['notifiers']
+    user data['backup']['user']
   end
 end
 
 def mo_application_sync(data)
   data['backup'] ||= Hash.new
   dirs = backup_sync_directories(data)
+  data['backup']['user'] ||= backup_default_user(data)
   data['backup']['syncers'] ||= backup_default_syncers
   data['backup']['notifiers'] ||= backup_default_notifiers
 
   backup_name = "#{node['fqdn']}-#{data['id']}"
 
   mo_backup_sync backup_name do
+    prefix_path   backup_name
     directories   dirs
     every_minutes data['backup']['sync']['every_minutes']
     every_hours   data['backup']['sync']['every_hours']
     syncers       data['backup']['syncers']
     notifiers     data['backup']['notifiers']
+    user          data['backup']['user']
   end
 end
 
@@ -192,6 +197,10 @@ def backup_shared_archives(data)
       archives << ::File.join(data['path'],'app','shared', shared_dir)
     end
   end
+end
+
+def backup_default_user(data)
+  data['backup']['user'] || node['mo_application']['backup']['user']
 end
 
 # Return databases hash changing user&pass to make backups. This is because backups need special

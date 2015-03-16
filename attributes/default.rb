@@ -14,6 +14,13 @@ default['mo_application']['backup']['database']['mysql']['username'] = 'backup'
 default['mo_application']['backup']['database']['mysql']['password'] = 'backup_pass'
 default['mo_application']['backup']['database']['mysql']['additional_options'] = ["--single-transaction", "--flush-logs", "--master-data=2", "--quick"]
 
+default['mo_application']['backup']['user'] = "root"
+default['mo_application']['backup']['group'] = "root"
+
+default['mo_application']['backup']['ssh_key']['databag'] = "backup_keys"
+default['mo_application']['backup']['ssh_key']['id'] = "backup_user"
+
+
 # Data bags used for backups. They must be encrypted
 default['mo_application']['backup']['storages_databag'] = "backup_storages"
 default['mo_application']['backup']['syncers_databag'] = "backup_syncers"
