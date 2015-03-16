@@ -10,24 +10,18 @@ default['nginx']['client_max_body_size'] = '20m'
 default['nginx']['client_body_buffer_size'] = '128k'
 
 
-default['mo_application']['mo_backup']['user'] = 'root'
-default['mo_application']['mo_backup']['database']['mysql']['username'] = 'backup'
-default['mo_application']['mo_backup']['database']['mysql']['password'] = 'backup_pass'
-default['mo_application']['mo_backup']['database']['mysql']['additional_options'] = ["--single-transaction", "--flush-logs", "--master-data=2", "--quick"]
-default['mo_application']['mo_backup']['archive']['use_sudo'] = false
-default['mo_application']['mo_backup']['compress'] = true
+default['mo_application']['backup']['database']['mysql']['username'] = 'backup'
+default['mo_application']['backup']['database']['mysql']['password'] = 'backup_pass'
+default['mo_application']['backup']['database']['mysql']['additional_options'] = ["--single-transaction", "--flush-logs", "--master-data=2", "--quick"]
 
-# Not used
-#default['mo_application']['mo_backup']['encryptor'] = "encryptor_databag_item"
+# Data bags used for backups. They must be encrypted
+default['mo_application']['backup']['storages_databag'] = "backup_storages"
+default['mo_application']['backup']['syncers_databag'] = "backup_syncers"
+default['mo_application']['backup']['notifiers_databag'] = "backup_syncers"
 
-default['mo_application']['mo_backup']['storages'] = []
-# Sample storage data:
-# default['mo_application']['mo_backup']['storages'] = [ { "id": "sftp1" } ]
-
-default['mo_application']['mo_backup']['mail'] = {}
-# Sample mail data:
-# default['mo_application']['mo_backup']['mail'] =  {
-#   "mail_id": "mail_databag_item",
-#   "on_success": "false",
-#   "from": "user@domain.tld"
-# }
+# Array of backup storages databag items within node[mo_application][backup][storages_databag] databaga
+default['mo_application']['backup']['storages'] = []
+# Array of backup syncers databag items within node[mo_application][backup][syncers_databag] databaga
+default['mo_application']['backup']['syncers'] = []
+# Array of backup notifiers databag items within node[mo_application][backup][notifiers_databag] databaga
+default['mo_application']['backup']['notifiers'] = []
