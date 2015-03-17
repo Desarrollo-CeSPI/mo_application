@@ -52,7 +52,7 @@ class MoApplication
     def nginx_create_configuration(template_action=:create)
       self.www_logs = Array(self.www_logs)
       new_resource.nginx_config.each do |app_name,options|
-        name = "#{new_resource.name}_#{app_name}"
+        name = "#{new_resource.name}_#{app_name}.conf"
 
         conf = nginx_options_for(template_action, name, options).merge(options)
 

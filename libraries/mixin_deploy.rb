@@ -1,9 +1,6 @@
 class MoApplication
   module DeployResourceBase
     def self.included(klass)
-      klass.actions :install, :remove
-      klass.default_action :install
-
       # User needs
       klass.attribute :home, :kind_of => [String, NilClass], :default => nil
       klass.attribute :shell, :kind_of => String, :default => "/bin/bash"
@@ -26,6 +23,7 @@ class MoApplication
       klass.attribute :force_deploy, :kind_of => [TrueClass,FalseClass], :default => false
       klass.attribute :ssh_wrapper, :kind_of => String
       klass.attribute :ssh_private_key, :kind_of => String
+      klass.attribute :environment, :kind_of => Hash, :default => Hash.new
 
 
       klass.attribute :log_dir, :kind_of => String, :default => 'log'
