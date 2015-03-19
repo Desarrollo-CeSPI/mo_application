@@ -87,8 +87,12 @@ def deploy_application
     user new_resource.user
     group new_resource.group
     migrate new_resource.migrate
+    environment new_resource.environment
     migration_command new_resource.migration_command
+    before_migrate new_resource.before_migrate
+    before_restart new_resource.before_restart
     ssh_wrapper new_resource.ssh_wrapper || node['mo_application']['ssh_wrapper']
+    restart_command new_resource.restart_command
     action (new_resource.force_deploy ? :force_deploy : :deploy)
   end
 end

@@ -15,7 +15,7 @@ class MoApplication
       klass.attribute :relative_path, :kind_of => String, :default => 'app'
       klass.attribute :repo, :kind_of => String
       klass.attribute :revision, :kind_of => [String], :default => "HEAD"
-      klass.attribute :migrate, :kind_of => [TrueClass, FalseClass], :default => false
+      klass.attribute :migrate, :kind_of => [TrueClass, FalseClass], :default => true
       klass.attribute :migration_command, :kind_of => [String, NilClass]
       klass.attribute :shared_dirs, :kind_of => Hash, :default => Hash.new
       klass.attribute :shared_files, :kind_of => Hash, :default => Hash.new
@@ -24,6 +24,9 @@ class MoApplication
       klass.attribute :ssh_wrapper, :kind_of => String
       klass.attribute :ssh_private_key, :kind_of => String
       klass.attribute :environment, :kind_of => Hash, :default => Hash.new
+      klass.attribute :before_migrate, :kind_of => [Proc, String]
+      klass.attribute :before_restart, :kind_of => [Proc, String]
+      klass.attribute :restart_command, :kind_of => [Proc, String]
 
 
       klass.attribute :log_dir, :kind_of => String, :default => 'log'
