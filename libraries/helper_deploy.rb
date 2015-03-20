@@ -65,8 +65,6 @@ def mo_application_deploy(data, resource, &before_deploy_block)
       # Name of wich Bundler groups to ignore: development and test
       bundle_without_groups data['bundle_without_groups']
     elsif resource.to_s =~ /php/
-      # Command used to run scripts
-      php_command data['php_command']
       # PHP FPM configuration
       php_fpm_config data['php_fpm_config']
     end

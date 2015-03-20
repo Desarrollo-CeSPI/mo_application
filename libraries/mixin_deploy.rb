@@ -205,7 +205,7 @@ class MoApplication
         create_dirs_before_symlink new_resource.create_dirs_before_symlink
         symlinks new_resource.shared_dirs
         user new_resource.user
-        group new_resource.group
+        group www_group
         migrate new_resource.migrate
         environment new_resource.environment
         migration_command new_resource.migration_command
