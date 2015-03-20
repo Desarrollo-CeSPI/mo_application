@@ -21,6 +21,14 @@ class MoApplication
       nil
     end
 
+    def logrotate_create_configuration
+      logrotate true
+    end
+
+    def logrotate_remove_configuration
+      logrotate false
+    end
+
     def logrotate(enable_flag = true)
       run_context.include_recipe "logrotate"
       self.tap do |me|

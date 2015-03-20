@@ -21,8 +21,16 @@ class MoApplication
       ::File.join(new_resource.path,'log','nginx')
     end
 
+    def www_access_log(name)
+      ::File.join(www_log_dir, "#{name}-access.log")
+    end
+
+    def www_error_log(name)
+      ::File.join(www_log_dir, "#{name}-error.log")
+    end
+
     def nginx_document_root(relative_path)
-      ::File.join new_resource.path, relative_path
+      ::File.join(application_current_path, relative_path)
     end
 
     def nginx_options_for(action, name, options)
@@ -41,20 +49,32 @@ class MoApplication
         },
         "options" => {
           "index"       => "index.php index.html index.htm",
-          "access_log"  => ::File.join(www_log_dir, "#{name}-access.log"),
-          "error_log"   => ::File.join(www_log_dir, "#{name}-error.log"),
+          "access_log"  => www_access_log(name),
+          "error_log"   => www_error_log(name)
         },
         "root"      => nginx_document_root(options['relative_document_root']),
         "site_type" => "dynamic"
       }
     end
 
-    def nginx_create_configuration(template_action=:create)
+    def nginx_create_configuration
+      nginx_configuration :create
+    end
+
+    def nginx_remove_configuration
+      nginx_configuration :delete
+    end
+
+    def nginx_application_name(name)
+      "#{new_resource.name}_#{name}"
+    end
+
+    def nginx_configuration(template_action=:create)
       self.www_logs = Array(self.www_logs)
       new_resource.nginx_config.each do |app_name,options|
-        name = "#{new_resource.name}_#{app_name}.conf"
+        name = nginx_application_name app_name
 
-        conf = nginx_options_for(template_action, name, options).merge(options)
+        conf = nginx_options_for(template_action, app_name , options).merge(options)
 
         self.www_logs << conf["options"]["access_log"] if conf["options"] && conf["options"]["access_log"]
         self.www_logs << conf["options"]["error_log"] if conf["options"] && conf["options"]["error_log"]
@@ -72,7 +92,7 @@ class MoApplication
           action   :nothing
         end
 
-        nginx_conf_file name do
+        nginx_conf_file "#{name}.conf" do
           action conf['action']
           block conf['block']
           cookbook conf['cookbook']

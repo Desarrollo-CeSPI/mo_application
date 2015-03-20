@@ -27,7 +27,9 @@ class MoApplication
       klass.attribute :before_migrate, :kind_of => [Proc, String]
       klass.attribute :before_restart, :kind_of => [Proc, String]
       klass.attribute :restart_command, :kind_of => [Proc, String]
-
+      klass.attribute :before_symlink, :kind_of => [Proc, String]
+      klass.attribute :before_deploy, :kind_of => [Proc, String]
+      klass.attribute :services, :kind_of => Hash, :default => Hash.new
 
       klass.attribute :log_dir, :kind_of => String, :default => 'log'
 
@@ -39,11 +41,254 @@ class MoApplication
       #       for this option must be a relative project path: by default we asume it is web/
       klass.attribute :nginx_config, :kind_of => Hash, :default => { 'frontend' => Hash.new }
 
-      klass.send :attr_reader, :callback_before_deploy
+    end
+  end
+
+  module DeployProviderBase
+    def self.included(klass)
+      klass.use_inline_resources
+      klass.send :include, MoApplication::Logrotate
+      klass.send :include, MoApplication::SetupSSH
+      klass.send :include, MoApplication::Nginx
     end
 
-    def before_deploy(&block)
-      @callback_before_deploy= block
+    # Main action for providers :install action
+    def install_application
+      create_user
+
+      create_directories
+
+      setup_ssh new_resource.user, new_resource.group, new_resource.ssh_private_key
+
+      create_services
+
+      add_sudo_services
+
+      instance_eval(&new_resource.before_deploy) if new_resource.before_deploy
+
+      deploy_application if new_resource.deploy
+
+      nginx_create_configuration
+
+      logrotate_create_configuration
+
+      links_for_user
+    end
+
+    # Main action for providers :remove action
+    def uninstall_aplication
+      remove_services
+
+      remove_sudo_services
+
+      nginx_remove_configuration
+
+      logrotate_remove_configuration
+
+      remove_directories
+
+      remove_user
+    end
+
+    # Creates application's user
+    def create_user
+      user :create
+    end
+
+    # Removes application's user
+    def remove_user
+      user :remove
+    end
+
+    def user(to_do)
+      mo_application_user new_resource.user do
+        group new_resource.group
+        ssh_keys new_resource.ssh_keys
+        action to_do
+      end
+    end
+
+    def application_shared_template(name, &block)
+      template(::File.join(application_shared_path, name),&block).tap do |t|
+        t.source "#{name}.erb"
+        t.owner new_resource.user
+        t.group new_resource.group
+      end
+    end
+
+    # Add convinient links for application's user to quick access to application's directory and logs
+    def links_for_user
+      link ::File.join('/home',new_resource.user,'application') do
+        to ::File.join(application_full_path)
+      end
+
+      link ::File.join('/home',new_resource.user,'log') do
+        to ::File.join(new_resource.path,'log')
+      end
+    end
+
+
+    # Helper method that returns application path joined with relative_path
+    def application_full_path
+      ::File.join(new_resource.path,new_resource.relative_path)
+    end
+
+    def application_shared_path
+      ::File.join(application_full_path,'shared')
+    end
+
+    def application_current_path
+      ::File.join(application_full_path,'current')
+    end
+
+    # Creates application required directories to deploy into
+    # Applications directory tree will be composed as capistrano or
+    # Chef deploy resource expects to be:
+    # /app/base_dir/
+    #   + shared/
+    #   + releases/
+    #   + @current -> releases/xxx
+    # We must create shared folder and every folder containing files to be 
+    # written as templates
+    def create_directories
+      dirs = shared_directories.
+        insert(0,new_resource.path).
+        insert(1,application_full_path).
+        insert(2,application_shared_path).
+        insert(3,full_var_run_directory).
+        insert(4,www_log_dir) + custom_dirs
+      dirs.each do |dir|
+          directory dir do
+            owner new_resource.user
+            group www_group
+            mode '0750'
+            recursive true
+          end
+        end
+    end
+
+    # Where will pids and sockets will be saved
+    def var_run_directory
+      ::File.join('var','run')
+    end
+
+    def full_var_run_directory
+      ::File.join(new_resource.path,var_run_directory)
+    end
+
+    # Returns every shared directory
+    # This directories will be:
+    #   * Every shared_files dirname
+    #   * Every shared_directory
+    # All this specified directories are relative to shared folder, so
+    # we need to build full_path
+    def shared_directories
+      (
+        new_resource.shared_files.map do |shared_path, _ |
+          ::File.join application_shared_path, ::File.dirname(shared_path)
+        end +
+        new_resource.shared_dirs.map do |shared_dir, _ |
+          ::File.join application_shared_path, shared_dir
+        end
+      ).sort.uniq
+    end
+
+    # Chef deploy resource wrapper
+    def deploy_application
+      deploy new_resource.name do
+        provider Chef::Provider::Deploy::Revision
+        deploy_to application_full_path
+        repo new_resource.repo
+        revision new_resource.revision
+        purge_before_symlink new_resource.shared_dirs.values
+        symlink_before_migrate new_resource.shared_files
+        create_dirs_before_symlink new_resource.create_dirs_before_symlink
+        symlinks new_resource.shared_dirs
+        user new_resource.user
+        group new_resource.group
+        migrate new_resource.migrate
+        environment new_resource.environment
+        migration_command new_resource.migration_command
+        before_migrate new_resource.before_migrate
+        before_restart new_resource.before_restart
+        ssh_wrapper new_resource.ssh_wrapper || node['mo_application']['ssh_wrapper']
+        restart_command new_resource.restart_command
+        before_symlink new_resource.before_symlink
+        action (new_resource.force_deploy ? :force_deploy : :deploy)
+      end
+    end
+
+    # Removes application base directory and every subdirectory inside it.
+    def remove_directories
+      directory new_resource.path do
+        recursive true
+        action :delete
+      end
+    end
+
+
+    # Add sudo service restart foreach service
+    def add_sudo_services
+      sudo_services :install
+    end
+
+    # Remove sudo service restart foreach service
+    def remove_sudo_services
+      sudo_services :remove
+    end
+
+    def sudo_services(to_do)
+      commands = ["/usr/sbin/service %{service} *","/sbin/start %{service}", "/sbin/stop %{service}", "/sbin/restart %{service}"]
+      commands = services_names.map {|srv| commands.map {|cmd| cmd % { :service => srv } } }.flatten
+      sudo "services_#{new_resource.user}" do
+        user      new_resource.user
+        runas     'root'
+        commands  commands
+        nopasswd  true
+        action to_do
+      end
+    end
+
+    def logrotate_service_logs
+        Array(www_logs)
+    end
+
+    def logrotate_application_logs
+        ::File.join(application_shared_path, new_resource.log_dir, '*.log')
+    end
+
+    def logrotate_postrotate
+      <<-CMD
+            [ ! -f #{nginx_pid} ] || kill -USR1 `cat #{nginx_pid}`
+      CMD
+    end
+
+
+    ###########################################################################
+    # The following methods shall be overwritten by providers that implement
+    # this module
+    #--------------------------------------------------------------------------
+
+    # Which custom directories are needed to be created when deploying application
+    #   For example, for a php application, a php for session files can be created
+    def custom_dirs
+      []
+    end
+
+    # Creates upstart configuration in case of a ruby app
+    def create_services
+      raise 'Provider must implement how to create services'
+    end
+
+    # Must stop service when is an application like puma or unicorn app
+    def remove_services
+      raise 'Provider must implement how to remove services'
+    end
+
+    # Returns service names related to this application. For a php application may be an array containg only php-fpm
+    # In case of a ruby application may be a hash with service name as key and command as value
+    def services_names
+      new_resource.services.is_a?(Hash) ? new_resource.services.keys : new_resource.services
     end
 
   end
