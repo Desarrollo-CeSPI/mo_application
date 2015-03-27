@@ -73,7 +73,7 @@ end
 # Return databases hash changing user&pass to make backups. This is because backups need special
 # privileges
 def backup_databases(data)
-  data['databases'].each do |name, db_data|
+  (data['databases'] || Hash.new).each do |name, db_data|
     raise "DB Type is not specified at #{name}." unless db_data['type']
     db_data['username'] = db_data['backup_username'] || node['mo_application']['backup']['database'][db_data['type']]['username']
     db_data['password'] = db_data['backup_password'] || node['mo_application']['backup']['database'][db_data['type']]['password']

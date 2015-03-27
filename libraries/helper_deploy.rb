@@ -1,6 +1,6 @@
 def mo_application_deploy(data, resource, &before_deploy_block)
   # Create a new resource named as data['id']
-  send resource, data['id'] do
+  r = send resource, data['id'] do
     #User to install application as
     user data['user']
     #Group of user to install application as
@@ -74,5 +74,7 @@ def mo_application_deploy(data, resource, &before_deploy_block)
 
   #When resource is created, we try to configure and setup some dot configurations
   dotconfig data
+
+  r
 end
 
