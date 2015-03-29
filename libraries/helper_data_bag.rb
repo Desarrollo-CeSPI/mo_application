@@ -85,15 +85,16 @@ def mo_testing_apps_from_databag(cookbook_name)
   applications_bag = node[cookbook_name]['applications_databag']
 
   _mo_testing_apps_from_databag(bag, id, applications_bag) do |name, values|
-    values['keys'] = Array(values['keys']) + Array(node['mo_application']['ssh_keys'])
-    values['keys'].uniq!
+    values['ssh_keys'] = Array(values['ssh_keys']) + Array(node['mo_application']['ssh_keys'])
+    values['ssh_keys'].uniq!
 
     values['user']  ||= name
     values['group']   = name
     values['path']    = ::File.join(node['mo_application']['testing_base_path'],name)
     values['deploy']  = false
     values['id']    ||= name # Needed to name backups
-    values['backup']  = { 'archives' => ::File.join(values['path'],'app','shared') }
+    values['backup'] ||= Hash.new
+    values['backup']['archives'] = [ ::File.join(values['path'],'app','shared'), ::File.join(values['path'],'log')]
 
     yield values if block_given?
 

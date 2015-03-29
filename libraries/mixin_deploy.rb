@@ -41,6 +41,9 @@ class MoApplication
       #       for this option must be a relative project path: by default we asume it is web/
       klass.attribute :nginx_config, :kind_of => Hash, :default => { 'frontend' => Hash.new }
 
+      # Hash of environment variables to set with dotenv
+      klass.attribute :dotenv, :kind_of => Hash, :default => Hash.new
+
     end
   end
 
@@ -65,6 +68,8 @@ class MoApplication
       add_sudo_services
 
       instance_eval(&new_resource.before_deploy) if new_resource.before_deploy
+
+      create_dotenv
 
       deploy_application if new_resource.deploy
 
@@ -112,7 +117,18 @@ class MoApplication
       template(::File.join(application_shared_path, name),&block).tap do |t|
         t.source "#{name}.erb"
         t.owner new_resource.user
-        t.group new_resource.group
+        t.group www_group
+      end
+    end
+
+    def  create_dotenv
+      if new_resource.dotenv.any?
+        file ::File.join(application_shared_path,'.env') do
+          owner new_resource.user
+          group www_group
+          content new_resource.environment.merge(new_resource.dotenv).map {|k,v| "#{k}=#{v}"}.join("\n")
+          action :create_if_missing
+        end
       end
     end
 

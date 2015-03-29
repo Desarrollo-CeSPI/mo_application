@@ -8,6 +8,9 @@ DEPENDENCIES
   mo_application
     path: .
     metadata: true
+  mo_backup
+    git: https://github.com/Desarrollo-CeSPI/mo_backup.git
+    revision: af0bdef29eb12f95b84dd81ee5e3af57a7b2ac01
   nginx_conf
     git: git://github.com/firebelly/chef-nginx_conf.git
     revision: 7119d47ddef5ac6e4bfd93bfa8089684b161f54d
@@ -54,7 +57,7 @@ GRAPH
     nginx_conf (~> 0.2.4)
     nscd (~> 0.12.0)
     user (~> 0.3.1)
-  mo_backup (0.1.31)
+  mo_backup (0.1.32)
     rbenv (~> 1.7.1)
   mysql (5.6.1)
     yum-mysql-community (>= 0.0.0)

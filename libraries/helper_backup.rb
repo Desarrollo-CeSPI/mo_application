@@ -14,6 +14,7 @@ def mo_application_backup(data)
   data['backup'] ||= Hash.new
   data['backup']['user'] ||= backup_default_user(data)
   data['backup']['archives'] ||= backup_shared_archives(data)
+  data['backup']['exclude_databases'] ||= []
   data['backup']['databases'] ||= backup_databases(data)
   data['backup']['storages'] ||= backup_default_storages
   data['backup']['notifiers'] ||= backup_default_notifiers
@@ -73,11 +74,16 @@ end
 # Return databases hash changing user&pass to make backups. This is because backups need special
 # privileges
 def backup_databases(data)
-  (data['databases'] || Hash.new).each do |name, db_data|
-    raise "DB Type is not specified at #{name}." unless db_data['type']
-    db_data['username'] = db_data['backup_username'] || node['mo_application']['backup']['database'][db_data['type']]['username']
-    db_data['password'] = db_data['backup_password'] || node['mo_application']['backup']['database'][db_data['type']]['password']
-    db_data['additional_options'] ||= node['mo_application']['backup']['database'][db_data['type']]['additional_options']
+  (data['databases'] || Hash.new).dup.tap do |new_db|
+    data['backup']['exclude_databases'].each do |k|
+      new_db.delete k
+    end
+    new_db.each do |name, db_data|
+      raise "DB Type is not specified at #{name}." unless db_data['type']
+      db_data['username'] = db_data['backup_username'] || node['mo_application']['backup']['database'][db_data['type']]['username']
+      db_data['password'] = db_data['backup_password'] || node['mo_application']['backup']['database'][db_data['type']]['password']
+      db_data['additional_options'] ||= node['mo_application']['backup']['database'][db_data['type']]['additional_options']
+    end
   end
 end
 

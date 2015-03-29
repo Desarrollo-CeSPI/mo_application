@@ -59,6 +59,9 @@ def mo_application_deploy(data, resource, &before_deploy_block)
     # For each virtual host, we can set specific options taht will be merged with custom options
     nginx_config data['applications']
 
+    # Create dotenv file
+    dotenv data['dotenv']
+
     # When is a ruby resource, we can also specify
     if resource.to_s =~ /ruby/
       ruby_version data['ruby_version']
