@@ -4,8 +4,8 @@ default['mo_application']['ssh_wrapper'] = '/usr/bin/ssh_wrapper'
 default['mo_application']['ssh_keys'] = []
 default['mo_application']['testing_base_path'] = '/opt/applications'
 
-default['cespi_albergue']['deployment_databag'] = "encrypted_keys"
-default['cespi_albergue']['ssh_private_key_databag_item'] = "deploy_key"
+default['mo_application']['deployment_databag'] = "encrypted_keys"
+default['mo_application']['ssh_private_key_databag_item'] = "deploy_key"
 
 default['nscd']['server_user']= 'nobody'
 
