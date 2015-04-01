@@ -313,6 +313,7 @@ mencionado, entonces:
 ```
   application_url(hash['applications']['frontend']) => http://my-app.example.com
   application_url(hash['applications']['backend']) => https://admin-my-app.example.com
+```
 
 ### Helpers asociados al manejo de databags
 
