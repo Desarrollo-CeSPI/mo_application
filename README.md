@@ -77,19 +77,18 @@ default['mo_application']['backup']['notifiers'] = []
   conectarse por rsync a servidores usando ssh
 * **backup ssh_key id**: nombre del data bag item donde estará la clave privada
   ssh encriptada
-* **mo_application backup storages_databag**: nombre del databag donde se
+* **backup storages_databag**: nombre del databag donde se
   almacenará en items encriptados, información sobre los storages
-* **mo_application backup syncers_databag**: nombre del databag donde se
+* **backup syncers_databag**: nombre del databag donde se
   almacenará en items encriptados, información sobre los syncers
-* **mo_application backup notifiers_databag**: nombre del databag donde se
+* **backup notifiers_databag**: nombre del databag donde se
   almacenará en items encriptados, información sobre los notifiers
-* **mo_application backup storages**: arreglo con los nombres de los data bag
+* **backup storages**: arreglo con los nombres de los data bag
   items a considerar como storages para backup
-* **mo_application backup syncers: arreglo con los nombres de los data bag items
+* **backup syncers**: arreglo con los nombres de los data bag items
   a considerar como syncers para backup
-* **mo_application backup notifiers: arreglo con los nombres de los data bag
+* **backup notifiers**: arreglo con los nombres de los data bag
   items a considerar como notifiers para backups
-```
 
 ### Formato del databag de backup.ssh_key_id y ssh_private_key_databag_item
 
