@@ -82,12 +82,6 @@ class MoApplication
         node.set['mo_application']['server_names'] = (node['mo_application']['server_names'] + [ conf['server_name'] ]).uniq
         node.save unless Chef::Config[:solo]
 
-        hostsfile_entry node.ipaddress do
-          hostname  node.fqdn
-          aliases   node['mo_application']['server_names']
-          action    :create
-        end
-
         service 'nginx' do
           action   :nothing
         end
