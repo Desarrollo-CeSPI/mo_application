@@ -4,6 +4,7 @@ def dotconfig(data)
   if data['user'] && data['databases']
     _,db = data['databases'] && data['databases'].first
     if db
+      mo_database_set_superuser_info db
       template "users database conf for #{data['user']}" do
         path lazy { ::File.join(::Dir.home(data['user']),".my.cnf" ) }
         owner data['user']
