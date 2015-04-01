@@ -8,6 +8,19 @@ funcionalidad a recetas como:
 
 Que son especializaciones de esta receta para los lenguajes mencionados.
 
+Entre las funcionalidades que provee está:
+
+* Creación del usuario con el que corrre la aplicación
+* Deployment de una aplicación desde un scm (usando el recurso deploy de chef)
+  como git.
+* Configuración de nginx
+* Rotación de logs
+* Provee backups a través del cookbook
+  [mo_backup](https://github.com/Desarrollo-CeSPI/mo_backup) basado en la gema
+  [backup](https://github.com/backup/backup)
+* Simplifica la creación de las bases de datos y usuarios con los que se
+  conectará la aplicación
+
 ## Plataformas soportadas
 
 Seguro funciona en Ubuntu y Debian. Debería probarse con la flia Redhat/CentOS
@@ -202,7 +215,7 @@ Además de deployar la aplicación, este recurso considera:
 
 * **home**: home del usuario con el que se deployará la app
 * **shell**: shell del usuario
-* **ssh_keys: arreglo de claves con las que se podrá hacer ssh a este usuario
+* **ssh_keys**: arreglo de claves con las que se podrá hacer ssh a este usuario
 * **path**: path donde se instalará la aplicación
 * **name**: nombre de la aplicación a deployar
 * **deploy**: booleano que indica si hay que hacer un git pull o no. No se usa
@@ -246,6 +259,89 @@ Además de deployar la aplicación, este recurso considera:
 * **dotenv**: un hash de variables que permiten setear un archivo shared/.env
   con variables de entorno. Útil para la combinación con **foreman**
 
+### MoApplication::Logrotate
+
+Provee funcionalidad que permite rotar los logs que genera la aplicación, esto
+es:
+
+* Los de nginx
+* Logs de los servicios de la aplicación como podrían ser php5-fpm o una
+  aplicación ruby independiente
+* Los logs propios de la aplicación
+
+### MoApplication::Nginx
+
+Provee la funcionalidad que configura los virtual hosts de nginx. Es un wrapper
+del cookbook [nginx_conf](git://github.com/firebelly/chef-nginx_conf) agregando
+la posibilidad de trabajar en el contexto de la aplicación que se deploya
+
+## Helpers
+
+### application_url(hash)
+
+A partir del hash de la aplicación en la clave applications, se dispone de cada
+uno de los virtual hosts que esta aplicación dispone. Entonces, si se pasa el
+valor asociado a esta clave, se devuelve la URL de la aplicación considerando
+que el protocolo se induce de si se configuró o no un proxy reverso que rompa
+ssl. Por ejemplo, asumamos el siguiente hash de una aplicación:
+
+```
+{
+  ...
+    "applications": {
+      "frontend": {
+        "server_name": "my-app.example.com",
+      },
+        "backend": {
+          "server_name": [
+            "admin-my-app.example.com",
+          "admin.my-app.example.com"
+            ],
+          "proxy_ssl": {
+            "enabled": true,
+            ...
+            }
+          }
+        }
+    }
+}
+```
+
+En el ejemplo anterior, asumiendo que `hash` es la variable que tiene el json
+mencionado, entonces: 
+
+```
+  application_url(hash['applications']['frontend']) => http://my-app.example.com
+  application_url(hash['applications']['backend']) => https://admin-my-app.example.com
+
+### Helpers asociados al manejo de databags
+
+Dado que las aplicaciones que usen esta receta definirán atributos propios en su
+receta, la idea de estas funciones es la de mergear los datos que se definieron
+como estandares por una receta en valores de un nodo, con valores leídos de un
+databag. Partiendo de esta premisa, se procede a explicar cada función
+disponible:
+
+#### mo_application_from_data_bag(cookbook, ssh_private_key)
+
+Esta función recibe el nombre de un cookbook, y a partir del mismo, accede a los
+atributos de: 
+
+* **Defaults del nodo**: que se acceden a partir de `node[cookbook]`, y
+* **Databag de la aplicación por ambiente**: que debe especificarse en:
+  `node[cookbook]['databag']/node[cookbook]['id']`
+
+Asumiendo que el data bag existe, lo que se hace es mergear ambos atributos,
+teniendo mayor peso el data bag. Esto es, lo que se especifica en el data bag 
+pisa los valores seteados por defecto en el nodo.
+
+El argumento ssh_private_key es un booleano que por defecto se asume true. Esto
+tratará de leer desde un data bag encriptado, la clave privada del usuario con
+el que se realizará el deployment. El data bag donde se busca el dato es
+`node[cookbook]['deployment_databag']/node[cookbook]['ssh_private_key_databag_item']`
+Esta clave privada sólo se lee del data bag si no se especifica el atributo
+`node[cookbook]['ssh_private_key']` (es decir que es falso o nil) y
+ssh_provate_key es true.
 
 ## Authors
 
