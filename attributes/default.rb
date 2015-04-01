@@ -4,6 +4,9 @@ default['mo_application']['ssh_wrapper'] = '/usr/bin/ssh_wrapper'
 default['mo_application']['ssh_keys'] = []
 default['mo_application']['testing_base_path'] = '/opt/applications'
 
+default['cespi_albergue']['deployment_databag'] = "encrypted_keys"
+default['cespi_albergue']['ssh_private_key_databag_item'] = "deploy_key"
+
 default['nscd']['server_user']= 'nobody'
 
 default['nginx']['default_site_enabled'] = false
@@ -20,7 +23,7 @@ default['mo_application']['backup']['database']['mysql']['additional_options'] =
 default['mo_application']['backup']['user'] = "root"
 default['mo_application']['backup']['group'] = "root"
 
-default['mo_application']['backup']['ssh_key']['databag'] = "backup_keys"
+default['mo_application']['backup']['ssh_key']['databag'] = "encrypted_keys"
 default['mo_application']['backup']['ssh_key']['id'] = "backup_user"
 
 

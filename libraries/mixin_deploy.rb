@@ -167,6 +167,11 @@ class MoApplication
     # We must create shared folder and every folder containing files to be 
     # written as templates
     def create_directories
+      execute "change-permissions-#{new_resource.path}" do
+        command "chown -R #{new_resource.user}:#{www_group} #{new_resource.path}"
+        user "root"
+        action :nothing
+      end
       dirs = shared_directories.
         insert(0,new_resource.path).
         insert(1,application_full_path).
@@ -174,13 +179,14 @@ class MoApplication
         insert(3,full_var_run_directory).
         insert(4,www_log_dir) + custom_dirs
       dirs.each do |dir|
-          directory dir do
-            owner new_resource.user
-            group www_group
-            mode '0750'
-            recursive true
-          end
+        directory dir do
+          owner new_resource.user
+          group www_group
+          mode '0750'
+          recursive true
+          notifies :run, "execute[change-permissions-#{new_resource.path}]"
         end
+      end
     end
 
     # Where will pids and sockets will be saved

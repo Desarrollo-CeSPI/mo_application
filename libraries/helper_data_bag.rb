@@ -48,7 +48,9 @@ end
 # Will read data bag for the same application multiple times. Used to install the same 
 # application multiple times in the same server
 def mo_multiples_applications_from_data_bag(cookbook_name, ssh_private_key = true, &block)
-  mo_data_bag_for_environment(node[cookbook_name]['multiple']['databag'], node[cookbook_name]['multiple']['id']).each do |app|
+  item = data_bag_item(node[cookbook_name]['multiple']['databag'], node[cookbook_name]['multiple']['id'])
+  Chef::Log.error("There where no applications found for multiple configuration of #{node[cookbook_name]['multiple']['databag']}/#{node[cookbook_name]['multiple']['id']}") if Array(item['applications']).empty?
+  Array(item['applications']).each do |app|
     data = _mo_application_from_data_bag cookbook_name, app, ssh_private_key do |bag|
       %w(user group path).each do |key|
         raise "Application databag item #{app} does not include #{key} key. Using default in multiple environment is bad" unless bag[key]
