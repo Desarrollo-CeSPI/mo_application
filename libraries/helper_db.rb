@@ -15,7 +15,7 @@ def mo_database_set_superuser_info(database_data)
     fail "Did not find a MySQL cluster named #{database_data['cluster']} tagged as mysql_master for environment #{node.chef_environment}"  if host.nil?
     database_data['host'] ||= host.fqdn
   end
-  database_data['application_servers'] = (Array(database_data['application_servers']) << node.ipaddress ).uniq
+  database_data['application_servers'] = (Array(database_data['application_servers']) << node.ipaddress << "127.0.0.1").uniq
 end
 
 def mo_database(data)

@@ -12,7 +12,7 @@ def dotconfig(data)
         cookbook 'mo_application'
         variables(username: db['username'] || db['name'],
                   password: db['password'],
-                  host: db['host'] || 'localhost')
+                  host: db['host'] || '127.0.0.1')
       end
     end
   end

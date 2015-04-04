@@ -1,4 +1,4 @@
-# Cookbook: mo_application-cookbook
+# Cookbook mo_application
 
 Este cookbook es más bien una librería que una receta. La idea es prestar
 funcionalidad a recetas como:
@@ -343,6 +343,51 @@ el que se realizará el deployment. El data bag donde se busca el dato es
 Esta clave privada sólo se lee del data bag si no se especifica el atributo
 `node[cookbook]['ssh_private_key']` (es decir que es falso o nil) y
 ssh_provate_key es true.
+
+#### mo_multiples_applications_from_data_bag()
+
+TODO: documentar
+
+#### mo_testing_apps_from_databag()
+
+TODO: documentar
+
+### Helpers asociados al manejo de bases de datos
+
+#### load_mysql_gem
+
+Carga el recurso mysql2_chef_gem para poder operar con mysql
+
+#### mo_database_set_superuser_info
+
+Para no cargar los datos del servidor de una base de datos directamente, es
+posible utilizar en vez de host la palabra clave `cluster` y como valor un
+nombre. Esta función, tratará de buscar el cluster de mysql con ese nombre para
+el mismo ambiente en que está el nodo y se quedará con la ip del master. Lo que
+se hace es setear el host a partir de esta búsqueda. 
+Esto además permite encontrar el superusuario con el que se tienen permisos para
+realizar las operaciones posteriores sobre ese cluster o host
+
+#### mo_database
+
+Para una aplicación que tenga N bases de datos, este helper irá una por una
+creando el usuario indicado con la base indicada en el host especificado. Los
+datos de superusuario con los que se creará el usuario y base de datos pueden
+especificarse directamente en el hash o buscarse usando
+`mo_database_set_superuser_info` a partir de la entrada `cluster` entre los
+datos de conexión
+
+### Helpers de backups
+
+TODO: documentar
+
+### Helpers de deploy
+
+TODO: documentar
+
+### Helper dotconfig
+
+TODO: documentar
 
 ## Authors
 
