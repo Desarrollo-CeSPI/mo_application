@@ -21,7 +21,7 @@ end
 def mo_database(data)
   load_mysql_gem
   (data['databases'] || Hash.new).each do | name, database |
-    mo_database_set_superuser_info(database.merge('application_servers' => data['application_servers']))
+    mo_database_set_superuser_info(database.merge!('application_servers' => data['application_servers']))
     mo_application_database database['name'] do
       username database['username']
       password database['password']
