@@ -1,3 +1,35 @@
+def mo_application_documentation(data)
+
+  template ::File.join('/home', data['user'], 'README') do
+    owner data['user']
+    cookbook 'mo_application'
+    variables(
+      name: data['id'],
+      user: data['user'],
+      group: data['group'],
+      application_path: ::File.join('$HOME','application'),
+      logs_path: ::File.join('$HOME','log'),
+      description: data['descriptioa'],
+      applications: data['applications'],
+      additional_doc: ::File.join('$HOME','doc')
+    )
+    source 'README.erb'
+  end
+
+  directory ::File.join('/home', data['user'], 'doc') do
+    owner data['user']
+  end
+
+  template ::File.join('/home', data['user'], 'doc', 'DATABASES') do
+    owner data['user']
+    cookbook 'mo_application'
+    source 'README-databases.erb'
+    variables(databases: data['databases'])
+    only_if { data['databases'] }
+  end
+
+end
+
 def mo_application_deploy(data, resource, &before_deploy_block)
   # Create a new resource named as data['id']
   r = send resource, data['id'] do
@@ -10,7 +42,7 @@ def mo_application_deploy(data, resource, &before_deploy_block)
     # List of ssh keys allowed to connect as user
     ssh_keys data['ssh_keys']
 
-
+    description data['description']
 
     #Application will be deployed at path/relative_path. If not specified, 
     #default "app" will be used
@@ -77,6 +109,8 @@ def mo_application_deploy(data, resource, &before_deploy_block)
 
   #When resource is created, we try to configure and setup some dot configurations
   dotconfig data
+
+  mo_application_documentation data
 
   r
 end

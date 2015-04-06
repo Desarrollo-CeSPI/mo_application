@@ -6,7 +6,7 @@ class MoApplication
     end
 
     def logrotate_application_logs
-      ::File.join(new_resource.path, 'shared', new_resource.log_dir, '*.log')
+      ::File.join(application_shared_path, new_resource.log_dir, '*.log')
     end
 
     def logrotate_permissions

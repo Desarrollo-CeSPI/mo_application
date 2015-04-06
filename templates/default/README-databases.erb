@@ -1,0 +1,10 @@
+-------------------------------------------------------------------------------
+Bases de datos
+-------------------------------------------------------------------------------
+<% @databases.each do |db, db_data| %>
++ <%= db %>
+  <% db_data.select {|k,v| %w(name username password host port type).include? k}.each do |k,v| %>
+    - <%= "#{k}: #{v}" %>
+  <% end %>
+
+<% end %>

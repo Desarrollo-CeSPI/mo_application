@@ -7,6 +7,7 @@ class MoApplication
       klass.attribute :ssh_keys, :kind_of => Array, :default => []
 
       # Deploy needs
+      klass.attribute :description, :kind_of => String
       klass.attribute :path, :kind_of => String, required: true
       klass.attribute :name, :kind_of => String, :name_attribute => true
       klass.attribute :deploy, :kind_of => [TrueClass, FalseClass], :default => true
@@ -131,6 +132,8 @@ class MoApplication
         end
       end
     end
+
+
 
     # Add convinient links for application's user to quick access to application's directory and logs
     def links_for_user
@@ -273,10 +276,6 @@ class MoApplication
 
     def logrotate_service_logs
         Array(www_logs)
-    end
-
-    def logrotate_application_logs
-        ::File.join(application_shared_path, new_resource.log_dir, '*.log')
     end
 
     def logrotate_postrotate
