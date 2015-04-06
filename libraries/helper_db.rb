@@ -18,10 +18,16 @@ def mo_database_set_superuser_info(database_data)
   database_data['application_servers'] = (Array(database_data['application_servers']) << node.ipaddress << "127.0.0.1").uniq
 end
 
-def mo_database(data)
-  load_mysql_gem
+def mo_database_set_all_superuser_info(data)
   (data['databases'] || Hash.new).each do | name, database |
     mo_database_set_superuser_info(database.merge!('application_servers' => data['application_servers']))
+  end
+end
+
+def mo_database(data)
+  load_mysql_gem
+  mo_database_set_all_superuser_info data
+  (data['databases'] || Hash.new).each do | name, database |
     mo_application_database database['name'] do
       username database['username']
       password database['password']

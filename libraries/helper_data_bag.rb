@@ -24,6 +24,9 @@ def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true)
   data['ssh_keys'] = Array(data['ssh_keys']) + Array(node['mo_application']['ssh_keys'])
   data['ssh_keys'].uniq!
 
+  # Setup database information that may be encapsulated in a cluster definition
+  mo_database_set_all_superuser_info data
+
   yield(data) if block_given? #This allows to manipulate data from outside
 
   # Add Deployment ssh_private_key
