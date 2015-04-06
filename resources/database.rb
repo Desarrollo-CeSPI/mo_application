@@ -11,6 +11,6 @@ attribute :password, :kind_of => String, :required => true
 
 def initialize(name, run_context=nil)
   super
-  @superuser_password = run_context && run_context.node['mysql']['server_root_password']
+  @superuser_password = run_context && run_context.node['mysql'] &&  run_context.node['mysql']['server_root_password']
   @username = name
 end
