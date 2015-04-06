@@ -13,7 +13,7 @@ def mo_database_set_superuser_info(database_data)
     master = search('node',"chef_environment:#{node.chef_environment} AND tags:mysql_master AND cluster_name:#{database_data['cluster']}")
     host = master.first
     fail "Did not find a MySQL cluster named #{database_data['cluster']} tagged as mysql_master for environment #{node.chef_environment}"  if host.nil?
-    database_data['host'] ||= host.fqdn
+    database_data['host'] = host.fqdn
   end
   database_data['application_servers'] = (Array(database_data['application_servers']) << node.ipaddress << "127.0.0.1").uniq
 end
