@@ -11,6 +11,15 @@ DEPENDENCIES
   mo_backup
     git: https://github.com/Desarrollo-CeSPI/mo_backup.git
     revision: af0bdef29eb12f95b84dd81ee5e3af57a7b2ac01
+  mo_mysql
+    git: https://github.com/Desarrollo-CeSPI/mo_mysql.git
+    revision: 1e1113b9b51984e8f8df33ce3dfcb36ac7746bb2
+  mysql-multi
+    git: https://github.com/rackspace-cookbooks/mysql-multi.git
+    revision: 03bda70cd9eb76fa8eceaa82f83103a2ff6f42ac
+  mysql_tuning
+    git: https://github.com/onddo/mysql_tuning-cookbook.git
+    revision: 70a1db066e7beae06f88f5fd5f7b3b9c67543c9b
   nginx_conf
     git: git://github.com/firebelly/chef-nginx_conf.git
     revision: 7538e9dd79edf88e794f61b11dbe74142a4e610b
