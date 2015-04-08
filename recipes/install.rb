@@ -9,3 +9,6 @@ end
 
 node[:mo_application][:packages].each { |p| package  p }
 
+::Chef::Recipe.send(:include, MoApplication::Nginx)
+
+nginx_conf_catch_all_site("default_catch_all_404")

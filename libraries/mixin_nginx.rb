@@ -5,6 +5,28 @@ class MoApplication
       klass.send :attr_accessor, :www_logs
     end
 
+    def nginx_conf_catch_all_site(name, nginx_options = {})
+      nginx_conf_file "#{name}.conf" do
+        listen "80 default_server"
+        server_name "_"
+        locations "/" => { "return" => 404 }
+        options nginx_options['options']
+      end
+
+      if nginx_options['ssl_certificates'].is_a?(Hash) &&
+         nginx_options['ssl_certificates']['public'] &&
+         nginx_options['ssl_certificates']['private']
+
+        nginx_conf_file "#{name}_ssl.conf" do
+          listen "443 default_server"
+          server_name "_"
+          locations "/" => { "return" => 404 }
+          ssl nginx_options['ssl_certificates']
+          options nginx_options['ssl_options']
+        end
+      end
+    end
+
     def nginx_pid
       node['nginx']['pid']
     end
@@ -74,7 +96,8 @@ class MoApplication
       new_resource.nginx_config.each do |app_name,options|
         name = nginx_application_name app_name
 
-        conf = nginx_options_for(template_action, app_name , options).merge(options)
+        conf = nginx_options_for(template_action, app_name , options)
+        conf['server_name'] = options['server_name'] if options['server_name'] # server name defined by user is what we need to use
 
         self.www_logs << conf["options"]["access_log"] if conf["options"] && conf["options"]["access_log"]
         self.www_logs << conf["options"]["error_log"] if conf["options"] && conf["options"]["error_log"]
@@ -106,6 +129,7 @@ class MoApplication
           site_type conf['site_type'].to_sym if conf['site_type']
         end
       end
+
     end
   end
 end
