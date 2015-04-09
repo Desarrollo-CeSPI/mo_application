@@ -82,7 +82,7 @@ class MoApplication
     end
 
     # Main action for providers :remove action
-    def uninstall_aplication
+    def uninstall_application
       remove_services
 
       remove_sudo_services

@@ -1,5 +1,5 @@
 def mo_application_documentation(data)
-
+  return if data['remove']
   template ::File.join('/home', data['user'], 'README') do
     owner data['user']
     cookbook 'mo_application'
