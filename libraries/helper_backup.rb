@@ -74,7 +74,8 @@ end
 # Return databases hash changing user&pass to make backups. This is because backups need special
 # privileges
 def backup_databases(data)
-  (data['databases'] || Hash.new).dup.tap do |new_db|
+  hash = data['databases'] || Hash.new
+  Marshal.load( Marshal.dump(hash) ).tap do |new_db|
     data['backup']['exclude_databases'].each do |k|
       new_db.delete k
     end
