@@ -112,6 +112,11 @@ def mo_application_deploy(data, resource, &before_deploy_block)
 
   mo_application_documentation data
 
+  if data['remove']
+    node.set["deployed_applications"] = Array(node["deployed_applications"]) - [data["id"]]
+  else
+    node.set["deployed_applications"] = (Array(node["deployed_applications"]) + [data["id"]]).uniq
+  end
   r
 end
 
