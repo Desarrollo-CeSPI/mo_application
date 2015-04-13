@@ -6,6 +6,7 @@ default['mo_application']['testing_base_path'] = '/opt/applications'
 
 default['mo_application']['deployment_databag'] = "encrypted_keys"
 default['mo_application']['ssh_private_key_databag_item'] = "deploy_key"
+default['mo_application']['deployment_ssh_key_name'] = "deploy"
 
 default['nscd']['server_user']= 'nobody'
 

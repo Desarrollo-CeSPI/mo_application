@@ -23,6 +23,7 @@ class MoApplication
       klass.attribute :create_dirs_before_symlink, :kind_of => Array, :default => []
       klass.attribute :force_deploy, :kind_of => [TrueClass,FalseClass], :default => false
       klass.attribute :ssh_wrapper, :kind_of => String
+      klass.attribute :ssh_key_name, :kind_of => String, :default => 'deploy'
       klass.attribute :ssh_private_key, :kind_of => String
       klass.attribute :environment, :kind_of => Hash, :default => Hash.new
       klass.attribute :before_migrate, :kind_of => [Proc, String]
@@ -62,7 +63,7 @@ class MoApplication
 
       create_directories
 
-      setup_ssh new_resource.user, new_resource.group, new_resource.ssh_private_key
+      setup_ssh new_resource.user, new_resource.group, new_resource.ssh_private_key, new_resource.ssh_key_name
 
       create_services
 
