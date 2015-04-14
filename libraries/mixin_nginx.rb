@@ -102,9 +102,6 @@ class MoApplication
         self.www_logs << conf["options"]["access_log"] if conf["options"] && conf["options"]["access_log"]
         self.www_logs << conf["options"]["error_log"] if conf["options"] && conf["options"]["error_log"]
 
-        node.set['mo_application']['server_names'] = (node['mo_application']['server_names'] + [ conf['server_name'] ]).uniq
-        node.save unless Chef::Config[:solo]
-
         service 'nginx' do
           action   :nothing
         end

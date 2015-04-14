@@ -33,6 +33,7 @@ end
 
 def mo_application_sync(data)
   data['backup'] ||= Hash.new
+  data['backup']['sync'] ||= { 'directories' => [] }
   dirs = backup_sync_directories(data)
   data['backup']['user'] ||= backup_default_user(data)
   data['backup']['syncers'] ||= backup_default_syncers

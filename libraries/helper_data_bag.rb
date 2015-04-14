@@ -57,7 +57,7 @@ def mo_multiples_applications_from_data_bag(cookbook_name, ssh_private_key = tru
     data = mo_data_bag_for_environment node[cookbook_name]['databag'], app
     #Fail fast if no data bag is defined
     raise "No data bag found for server #{node[cookbook_name]['multiple']['databag']}/#{node[cookbook_name]['multiple']['id']} and application #{node[cookbook_name]['databag']}/#{app}" if data.nil? || data.empty?
-    _mo_application_from_data_bag cookbook_name, app, ssh_private_key, data do |bag|
+    data = _mo_application_from_data_bag(cookbook_name, app, ssh_private_key, data) do |bag|
       %w(user group path).each do |key|
         raise "Application databag item #{app} does not include #{key} key. Using default in multiple environment is bad" unless bag[key]
       end

@@ -73,6 +73,8 @@ class MoApplication
 
       create_dotenv
 
+      configure_user_environment
+
       deploy_application if new_resource.deploy
 
       nginx_create_configuration
@@ -122,6 +124,7 @@ class MoApplication
         t.group www_group
       end
     end
+
 
     def  create_dotenv
       if new_resource.dotenv.any?
@@ -296,6 +299,9 @@ class MoApplication
     def custom_dirs
       []
     end
+    
+    #Personalize shell environment using magic_shell
+    def configure_user_environment; end
 
     # Creates upstart configuration in case of a ruby app
     def create_services
