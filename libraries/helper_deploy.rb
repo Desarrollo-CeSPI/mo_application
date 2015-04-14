@@ -9,7 +9,7 @@ def mo_application_documentation(data)
       group: data['group'],
       application_path: ::File.join('$HOME','application'),
       logs_path: ::File.join('$HOME','log'),
-      description: data['descriptioa'],
+      description: data['description'],
       applications: data['applications'],
       additional_doc: ::File.join('$HOME','doc')
     )
