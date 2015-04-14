@@ -18,8 +18,8 @@ end
 # Returns coobbook_name attributes merged with data bag specific attributes
 # for node's environment. This will allow to only specify those attributes to
 # be overwritten by data bag
-def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true)
-  data = mo_data_bag_for_environment node[cookbook_name]['databag'], id
+def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true, data=nil)
+  data ||= mo_data_bag_for_environment node[cookbook_name]['databag'], id
   # Add global ssh_keys to speciific keys
   data['ssh_keys'] = Array(data['ssh_keys']) + Array(node['mo_application']['ssh_keys'])
   data['ssh_keys'].uniq!
@@ -54,7 +54,10 @@ def mo_multiples_applications_from_data_bag(cookbook_name, ssh_private_key = tru
   item = data_bag_item(node[cookbook_name]['multiple']['databag'], node[cookbook_name]['multiple']['id'])
   Chef::Log.error("There where no applications found for multiple configuration of #{node[cookbook_name]['multiple']['databag']}/#{node[cookbook_name]['multiple']['id']}") if Array(item['applications']).empty?
   Array(item['applications']).each do |app|
-    data = _mo_application_from_data_bag cookbook_name, app, ssh_private_key do |bag|
+    data = mo_data_bag_for_environment node[cookbook_name]['databag'], app
+    #Fail fast if no data bag is defined
+    raise "No data bag found for server #{node[cookbook_name]['multiple']['databag']}/#{node[cookbook_name]['multiple']['id']} and application #{node[cookbook_name]['databag']}/#{app}" if data.nil? || data.empty?
+    _mo_application_from_data_bag cookbook_name, app, ssh_private_key, data do |bag|
       %w(user group path).each do |key|
         raise "Application databag item #{app} does not include #{key} key. Using default in multiple environment is bad" unless bag[key]
       end
@@ -71,11 +74,9 @@ def _mo_testing_apps_from_databag(bag, id, applications_bag)
   data_bag_item(bag, id).tap do |data|
     data['applications'].each do |name|
       values = mo_data_bag_for_environment applications_bag, name
-      if values.nil?
-        Chef::Log.error "No values found for applications databag #{applications_bag} item #{name}"
-      else
-        yield name, values if block_given?
-      end
+      #Fail fast if no data bag is defined
+      raise "No data bag found for testing server #{bag}/#{id} and application #{applications_bag}/#{name}" if values.nil? || values.empty?
+      yield name, values if block_given?
     end
   end
 end
