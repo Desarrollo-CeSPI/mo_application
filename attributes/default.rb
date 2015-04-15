@@ -1,6 +1,16 @@
 #Default values for custom cookbooks
 default['mo_application']['databag'] = "applications" 
 
+#Mail configuration for custom cookbooks
+default['mo_application']['mail'] = {
+  'host'      => 'undefined',
+  'port'      => 25,
+  'domain'    => 'example.com',
+  'username'  => nil,
+  'password'  => nil,
+  'from'      => 'admin@example.com'
+}
+
 default['mo_application']['packages']=[]
 default['mo_application']['server_names']=[]
 default['mo_application']['ssh_wrapper'] = '/usr/bin/ssh_wrapper'
