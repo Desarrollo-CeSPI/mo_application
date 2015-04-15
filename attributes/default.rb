@@ -1,3 +1,6 @@
+#Default values for custom cookbooks
+default['mo_application']['databag'] = "applications" 
+
 default['mo_application']['packages']=[]
 default['mo_application']['server_names']=[]
 default['mo_application']['ssh_wrapper'] = '/usr/bin/ssh_wrapper'
