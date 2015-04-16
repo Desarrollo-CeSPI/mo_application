@@ -12,7 +12,7 @@ Logs de servicios adicionales: <%= @logs_path %>
 -------------------------------------------------------------------------------
 Aplicaciones web
 -------------------------------------------------------------------------------
-<% @applications.each do |app, app_data| %>
+<% Array(@applications).each do |app, app_data| %>
 + <%= app %>
   - DNS: <%= Array(app_data['server_name']).join ',' %>
 
