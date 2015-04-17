@@ -8,7 +8,8 @@ default['mo_application']['mail'] = {
   'domain'    => 'example.com',
   'username'  => nil,
   'password'  => nil,
-  'from'      => 'admin@example.com'
+  'from'      => 'admin@example.com',
+  'perform_deliveries' => true,
 }
 
 default['mo_application']['packages']=[]
