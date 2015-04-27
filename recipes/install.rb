@@ -1,5 +1,6 @@
 include_recipe 'mo_application::ssh_wrapper'
 include_recipe 'nginx::default'
+include_recipe 'nginx::http_stub_status_module'
 include_recipe 'chef-msttcorefonts::default'
 include_recipe 'mo_application::backup'
 
