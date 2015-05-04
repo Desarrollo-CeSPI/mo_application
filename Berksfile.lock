@@ -11,8 +11,8 @@ DEPENDENCIES
     tag: v0.1.34
   mo_monitoring_client
     git: https://github.com/Desarrollo-CeSPI/mo_monitoring_client.git
-    revision: 86bd29f8d0e3aa4193861a00c089311211f463a2
-    tag: v1.0.0
+    revision: 3c049d8535fc34d315074aa0bd7a725f2a2e64e1
+    tag: v1.0.1
   mo_mysql
     git: https://github.com/Desarrollo-CeSPI/mo_mysql.git
     revision: 4c397823ca1b4f88e4bb1cba4fe23c868dced73f
@@ -47,7 +47,7 @@ GRAPH
     apt (>= 0.0.0)
     yum (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  mo_application (1.1.1)
+  mo_application (1.2.0)
     chef-msttcorefonts (~> 0.9.0)
     chef-sugar (~> 2.5.0)
     database (~> 4.0.3)
@@ -62,7 +62,7 @@ GRAPH
     user (~> 0.4.0)
   mo_backup (0.1.34)
     rbenv (~> 1.7.1)
-  mo_monitoring_client (1.0.0)
+  mo_monitoring_client (1.0.1)
     nrpe (~> 1.5.0)
   mo_mysql (1.1.0)
     build-essential (~> 2.2.0)
