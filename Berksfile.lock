@@ -2,18 +2,17 @@ DEPENDENCIES
   chef-msttcorefonts
     git: https://github.com/captnswing/chef-msttcorefonts.git
     revision: 9b1417077047cc8371fac51a0fd67c04f2959b87
-  hostsfile
-    git: https://github.com/customink-webops/hostsfile.git
-    revision: 44c7960b21bab50247b0d4c2cc571a33c07f0e60
   mo_application
     path: .
     metadata: true
   mo_backup
     git: https://github.com/Desarrollo-CeSPI/mo_backup.git
     revision: ff9e41dcd64712db54590f69f412c3fd64942b0f
+    tag: v0.1.34
   mo_monitoring_client
     git: https://github.com/Desarrollo-CeSPI/mo_monitoring_client.git
-    revision: a86b2e0e314fc53ad64faebc7d780fc159f7841c
+    revision: 86bd29f8d0e3aa4193861a00c089311211f463a2
+    tag: v1.0.0
   mo_mysql
     git: https://github.com/Desarrollo-CeSPI/mo_mysql.git
     revision: 4c397823ca1b4f88e4bb1cba4fe23c868dced73f
@@ -43,19 +42,18 @@ GRAPH
     dmg (>= 0.0.0)
     windows (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  hostsfile (2.4.5)
   logrotate (1.7.0)
   mariadb (0.3.0)
     apt (>= 0.0.0)
     yum (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  mo_application (1.1.0)
+  mo_application (1.1.1)
     chef-msttcorefonts (~> 0.9.0)
     chef-sugar (~> 2.5.0)
     database (~> 4.0.3)
     logrotate (~> 1.7.0)
     mo_backup (~> 0.1.0)
-    mo_monitoring_client (~> 0.1.0)
+    mo_monitoring_client (~> 1.0.0)
     mo_mysql (~> 1.1.0)
     mysql2_chef_gem (~> 1.0.1)
     nginx (~> 2.7.4)
@@ -64,7 +62,7 @@ GRAPH
     user (~> 0.4.0)
   mo_backup (0.1.34)
     rbenv (~> 1.7.1)
-  mo_monitoring_client (0.1.0)
+  mo_monitoring_client (1.0.0)
     nrpe (~> 1.5.0)
   mo_mysql (1.1.0)
     build-essential (~> 2.2.0)
