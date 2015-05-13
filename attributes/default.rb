@@ -30,6 +30,12 @@ default['nginx']['server_tokens'] = 'off'
 default['nginx']['client_max_body_size'] = '20m'
 default['nginx']['client_body_buffer_size'] = '128k'
 
+# Exception notifications
+default['mo_application']['exception_notifications'] = {
+  'email_prefix' => 'Application',
+  'sender_address' => 'errors@example.com',
+  'exception_recipients' => ['admin@example.com']
+}
 
 default['mo_application']['backup']['database']['mysql']['username'] = 'backup'
 default['mo_application']['backup']['database']['mysql']['password'] = 'backup_pass'
