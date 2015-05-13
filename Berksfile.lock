@@ -47,7 +47,7 @@ GRAPH
     apt (>= 0.0.0)
     yum (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  mo_application (1.1.1)
+  mo_application (1.1.2)
     chef-msttcorefonts (~> 0.9.0)
     chef-sugar (~> 2.5.0)
     database (~> 4.0.3)
