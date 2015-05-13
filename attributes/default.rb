@@ -34,7 +34,7 @@ default['nginx']['client_body_buffer_size'] = '128k'
 default['mo_application']['exception_notifications'] = {
   'email_prefix' => 'Application',
   'sender_address' => 'errors@example.com',
-  'exception_recipients' => ['admin@example.com']
+  'exception_recipients' => []
 }
 
 default['mo_application']['backup']['database']['mysql']['username'] = 'backup'
