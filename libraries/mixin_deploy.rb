@@ -245,6 +245,11 @@ class MoApplication
         before_symlink new_resource.before_symlink
         action (new_resource.force_deploy ? :force_deploy : :deploy)
       end
+
+      file ::File.join(application_full_path, 'REVISION') do
+        content new_resource.revision
+        user new_resource.user
+      end
     end
 
     # Removes application base directory and every subdirectory inside it.

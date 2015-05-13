@@ -100,13 +100,15 @@ def mo_testing_apps_from_databag(cookbook_name)
     values['deploy']  = false
     values['id']    ||= name # Needed to name backups
     values['backup'] ||= Hash.new
-    values['backup']['archives'] = [ ::File.join(values['path'],'app','shared'), ::File.join(values['path'],'log')]
+    values['backup']['archives'] = [ ::File.join(values['path'],'log')]
+    values['backup']['sync'] = {'directories' => [ '' ] } # Forces to backup all shared dir
 
     yield values if block_given?
 
     dotconfig values
     mo_database values
     mo_application_backup values
+    mo_application_sync values
   end
 end
 

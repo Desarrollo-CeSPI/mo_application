@@ -33,7 +33,7 @@ end
 
 def mo_application_sync(data)
   data['backup'] ||= Hash.new
-  data['backup']['sync'] ||= { 'directories' => [] }
+  data['backup']['sync'] ||= { 'directories' => (data['shared_dirs'] || Hash.new).keys }
   dirs = backup_sync_directories(data)
   data['backup']['user'] ||= backup_default_user(data)
   data['backup']['syncers'] ||= backup_default_syncers
@@ -62,9 +62,7 @@ end
 def backup_shared_archives(data)
   [].tap do |archives|
     archives << ::File.join(data['path'],'log')
-    (data['shared_dirs'] || Hash.new).each do |shared_dir,_|
-      archives << ::File.join(data['path'],'app','shared', shared_dir)
-    end
+    archives << ::File.join(data['path'],'app','REVISION')
   end
 end
 
