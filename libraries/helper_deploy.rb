@@ -11,6 +11,7 @@ def mo_application_documentation(data)
       logs_path: ::File.join('$HOME','log'),
       description: data['description'],
       applications: data['applications'],
+      environment:  data['environment'],
       additional_doc: ::File.join('$HOME','doc')
     )
     source 'README.erb'
