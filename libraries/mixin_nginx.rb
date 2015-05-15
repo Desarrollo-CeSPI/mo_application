@@ -111,9 +111,9 @@ class MoApplication
           block conf['block']
           cookbook conf['cookbook']
           listen conf['listen']
-          locations conf['locations']
-          options conf['options']
-          upstream conf['upstream']
+          locations ((conf['locations'] || Hash.new).merge(options['locations'] || Hash.new))
+          options ((conf['options'] || Hash.new).merge(options['options'] || Hash.new))
+          upstream ((conf['upstream'] || Hash.new).merge(options['upstream'] || Hash.new))
           reload conf['reload']
           root conf['root']
           server_name conf['server_name']
