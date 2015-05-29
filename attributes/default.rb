@@ -12,6 +12,9 @@ default['mo_application']['mail'] = {
   'perform_deliveries' => true,
 }
 
+# Elasticsearch default configuration for custom cookbooks
+default['mo_application']['elasticsearch']['url'] = 'http://localhost:9200'
+
 default['mo_application']['packages']=[]
 default['mo_application']['server_names']=[]
 default['mo_application']['ssh_wrapper'] = '/usr/bin/ssh_wrapper'
