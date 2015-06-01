@@ -17,7 +17,7 @@ class MoApplication
       klass.attribute :repo, :kind_of => String
       klass.attribute :revision, :kind_of => [String], :default => "HEAD"
       klass.attribute :migrate, :kind_of => [TrueClass, FalseClass], :default => true
-      klass.attribute :migration_command, :kind_of => [String, NilClass]
+      klass.attribute :migration_command, :kind_of => String
       klass.attribute :shared_dirs, :kind_of => Hash, :default => Hash.new
       klass.attribute :shared_files, :kind_of => Hash, :default => Hash.new
       klass.attribute :create_dirs_before_symlink, :kind_of => Array, :default => []

@@ -57,8 +57,8 @@ def mo_application_deploy(data, resource, &before_deploy_block)
     revision data['revision']
 
     # Run migration command??? defaults to true
-    migrate data['migrate']
-    migration_command data['migration_command']
+    migrate !!(data['migrate'] && data['migration_command'])
+    migration_command (data['migration_command'] || '')
 
     # Deploy application?? If not nothing will be done relative to download code and run migrations
     deploy data['deploy']
