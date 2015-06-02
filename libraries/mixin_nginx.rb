@@ -14,8 +14,8 @@ class MoApplication
       end
 
       if nginx_options['ssl_certificates'].is_a?(Hash) &&
-         nginx_options['ssl_certificates']['public'] &&
-         nginx_options['ssl_certificates']['private']
+        nginx_options['ssl_certificates']['public'] &&
+        nginx_options['ssl_certificates']['private']
 
         nginx_conf_file "#{name}_ssl.conf" do
           listen "443 default_server"
@@ -125,8 +125,13 @@ class MoApplication
           precedence conf['precedence']
           site_type conf['site_type'].to_sym if conf['site_type']
         end
+
+        mo_collectd_nginx_log name, www_access_log(app_name), www_error_log(app_name)
+
       end
 
+
     end
+
   end
 end
