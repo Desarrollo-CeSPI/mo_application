@@ -101,6 +101,9 @@ def mo_application_deploy(data, resource, &before_deploy_block)
 
     # When is a ruby resource, we can also specify
     if resource.to_s =~ /ruby/
+      # Force gems update by removing bundle path and regenerating it
+      update_gems data['update_gems']
+      
       ruby_version data['ruby_version']
       # Name of wich Bundler groups to ignore: development and test
       bundle_without_groups data['bundle_without_groups']
