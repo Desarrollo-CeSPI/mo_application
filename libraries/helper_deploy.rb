@@ -103,7 +103,10 @@ def mo_application_deploy(data, resource, &before_deploy_block)
     if resource.to_s =~ /ruby/
       # Force gems update by removing bundle path and regenerating it
       update_gems data['update_gems']
-      
+
+      # Force the use of specified number of jobs to run bundle install
+      bundle_install_jobs data['bundle_install_jobs']
+
       ruby_version data['ruby_version']
       # Name of wich Bundler groups to ignore: development and test
       bundle_without_groups data['bundle_without_groups']
