@@ -31,6 +31,7 @@ class MoApplication
       klass.attribute :restart_command, :kind_of => [Proc, String]
       klass.attribute :before_symlink, :kind_of => [Proc, String]
       klass.attribute :before_deploy, :kind_of => [Proc, String]
+      klass.attribute :enable_submodules, :kind_of => [TrueClass, FalseClass]
       klass.attribute :services, :kind_of => Hash, :default => Hash.new
 
       klass.attribute :log_dir, :kind_of => String, :default => 'log'
@@ -226,6 +227,7 @@ class MoApplication
     def deploy_application
       deploy new_resource.name do
         provider Chef::Provider::Deploy::Revision
+        enable_submodules new_resource.enable_submodules
         deploy_to application_full_path
         repo new_resource.repo
         revision new_resource.revision

@@ -45,6 +45,9 @@ def mo_application_deploy(data, resource, &before_deploy_block)
 
     description data['description']
 
+
+    enable_submodules data['enable_submodules']
+
     #Application will be deployed at path/relative_path. If not specified, 
     #default "app" will be used
     path data['path']

@@ -4,7 +4,7 @@ maintainer_email 'chrodriguez@gmail.com leandro.ditommaso@mikroways.net'
 license          'MIT'
 description      'Provides resources for almost any application'
 long_description 'Installs/Configures mo_application'
-version          '1.1.11'
+version          '1.1.12'
 
 depends         'database',             '~> 4.0.3'
 depends         'user',                 '~> 0.4.0'
