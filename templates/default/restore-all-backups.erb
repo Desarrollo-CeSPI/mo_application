@@ -1,0 +1,42 @@
+#!/bin/bash
+
+TEMP=`getopt -o e:s:S: -n $0 -- "$@"`
+RET_CMD=$?
+
+help_message() {
+  echo
+  echo "Usage:"
+  echo "  $0 [-e ENV] [-s SOURCE_SERVER] -S BACKUP_SERVER"
+  echo
+  echo "    -e ENV is one of testing, staging or production" 
+  echo "    -s SOURCE_SERVER is the server name of the source data to be restored"
+}
+
+if [ $RET_CMD -ne 0 ] ; then
+  help_message
+  exit 1
+fi
+
+eval set -- "$TEMP"
+CHEF_ENV=<%= node.chef_environment %>
+SOURCE_HOST=<%= node.fqdn %>
+
+while true ; do
+  case "$1" in
+    -e) CHEF_ENV=$2; shift 2;;
+    -s) SOURCE_HOST=$2; shift 2;;
+    -S) BKSERVER=$2; shift 2;;
+   --) shift ; break ;;
+    h|*) help_message ; exit 1 ;;
+  esac
+done
+
+if [ -z "$BKSERVER" ]; then
+  echo "You must specify a backup server to connect using -S"
+  exit 1
+fi
+
+SCRIPT=`basename $0`
+for i in `ls <%= node['mo_backup']['restore_script'] %>-* | grep -v $SCRIPT`; do
+  echo `basename $i` -e $CHEF_ENV -s $SOURCE_HOST -S $BKSERVER
+done

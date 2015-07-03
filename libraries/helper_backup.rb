@@ -29,6 +29,17 @@ def mo_application_backup(data)
     user data['backup']['user']
     action (data['remove'] ? :remove : :create)
   end
+
+  restore_script = "#{node['mo_backup']['restore_script']}-#{data['id']}"
+  template restore_script do
+    mode "0700"
+    source "restore-backup-app.erb"
+    cookbook 'mo_application'
+    variables :application_id => data['id'],
+      :db_mappings => (data['databases'] || Hash.new()).map {|k,v| "#{k}:#{v['name']}"}.join(","),
+      :local_user => data['user']
+    action (data['remove'] ? :delete : :create)
+  end
 end
 
 def mo_application_sync(data)
