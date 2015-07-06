@@ -10,6 +10,17 @@ def mo_application_sync_from_databag(cookbook_name)
   end
 end
 
+def mo_application_restore_backup_cmd(data)
+  data['backup'] ||= Hash.new
+  data['backup']['restore_from'] ||= Hash.new
+  cmd = "#{node['mo_backup']['restore_script']}-#{data['id']}"
+  cmd += " -a #{data['backup']['restore_from']['id']}" if data['backup']['restore_from']['id']
+  cmd += " -s #{data['backup']['restore_from']['server']}" if data['backup']['restore_from']['server']
+  cmd += " -e #{data['backup']['restore_from']['environment']}" if data['backup']['restore_from']['environment']
+  cmd += " -S #{data['backup']['restore_from']['backup_server']}" if data['backup']['restore_from']['backup_server']
+  cmd
+end
+
 def mo_application_backup(data)
   data['backup'] ||= Hash.new
   data['backup']['user'] ||= backup_default_user(data)
