@@ -6,23 +6,46 @@ class MoApplication
     end
 
     def nginx_conf_catch_all_site(name, nginx_options = {})
-      nginx_conf_file "#{name}.conf" do
-        listen "80 default_server"
-        server_name "_"
-        locations "/" => { "return" => 404 }
-        options nginx_options['options']
-      end
+      if node['mo_application']['custom_error_pages']
+        nginx_conf_file "#{name}.conf" do
+          listen "80 default_server"
+          server_name "_"
+          root node['mo_application']['error_pages_location']
+          locations "/" => { "try_files" => "$uri /404.html =404" }
+          options nginx_options['options']
+        end
 
-      if nginx_options['ssl_certificates'].is_a?(Hash) &&
-        nginx_options['ssl_certificates']['public'] &&
-        nginx_options['ssl_certificates']['private']
+        if nginx_options['ssl_certificates'].is_a?(Hash) &&
+            nginx_options['ssl_certificates']['public'] &&
+            nginx_options['ssl_certificates']['private']
 
-        nginx_conf_file "#{name}_ssl.conf" do
-          listen "443 default_server"
+          nginx_conf_file "#{name}_ssl.conf" do
+            listen "443 default_server"
+            server_name "_"
+            locations "/" => { "return" => 404 }
+            ssl nginx_options['ssl_certificates']
+            options nginx_options['ssl_options']
+          end
+        end
+      else
+        nginx_conf_file "#{name}.conf" do
+          listen "80 default_server"
           server_name "_"
           locations "/" => { "return" => 404 }
-          ssl nginx_options['ssl_certificates']
-          options nginx_options['ssl_options']
+          options nginx_options['options']
+        end
+
+        if nginx_options['ssl_certificates'].is_a?(Hash) &&
+            nginx_options['ssl_certificates']['public'] &&
+            nginx_options['ssl_certificates']['private']
+
+          nginx_conf_file "#{name}_ssl.conf" do
+            listen "443 default_server"
+            server_name "_"
+            locations "/" => { "return" => 404 }
+            ssl nginx_options['ssl_certificates']
+            options nginx_options['ssl_options']
+          end
         end
       end
     end
