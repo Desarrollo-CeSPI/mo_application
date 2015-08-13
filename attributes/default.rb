@@ -62,3 +62,6 @@ default['mo_application']['backup']['storages'] = []
 default['mo_application']['backup']['syncers'] = []
 # Array of backup notifiers databag items within node[mo_application][backup][notifiers_databag] databaga
 default['mo_application']['backup']['notifiers'] = []
+
+default['mo_application']['custom_error_pages'] = nil
+default['mo_application']['error_pages_location'] = "/opt/error_pages"
