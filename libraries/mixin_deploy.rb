@@ -285,11 +285,7 @@ class MoApplication
       end
     end
 
-    def logrotate_service_logs
-        Array(www_logs)
-    end
-
-    def logrotate_postrotate
+    def logrotate_postrotate_nginx
       <<-CMD
             [ ! -f #{nginx_pid} ] || kill -USR1 `cat #{nginx_pid}`
       CMD
