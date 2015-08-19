@@ -38,5 +38,5 @@ fi
 
 SCRIPT=`basename $0`
 for i in `ls <%= node['mo_backup']['restore_script'] %>-* | grep -v $SCRIPT`; do
-  `basename $i` -e $CHEF_ENV -s $SOURCE_HOST -S $BKSERVER
+  `basename $i` -e $CHEF_ENV -s $SOURCE_HOST -S $BKSERVER -D /
 done

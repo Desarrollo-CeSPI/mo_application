@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEMP=`getopt -o e:s:S:a: -n $0 -- "$@"`
+TEMP=`getopt -o e:s:S:a:D: -n $0 -- "$@"`
 RET_CMD=$?
 
 help_message() {
@@ -11,6 +11,7 @@ help_message() {
   echo "    -e ENV is one of testing, staging or production" 
   echo "    -s SOURCE_SERVER is the server name of the source data to be restored"
   echo "    -a application_id is the application's data bag item name/id of the app to restore"
+  echo "    -D directory where backup will be restored. Defaults to /"
 }
 
 if [ $RET_CMD -ne 0 ] ; then
@@ -21,7 +22,8 @@ fi
 eval set -- "$TEMP"
 CHEF_ENV=<%= node.chef_environment %>
 SOURCE_HOST=<%= node.fqdn %>
-APPLICATION=<%= @application_id %> \
+APPLICATION=<%= @application_id %>
+DIR=/
 
 while true ; do
   case "$1" in
@@ -29,6 +31,7 @@ while true ; do
     -s) SOURCE_HOST=$2; shift 2;;
     -S) BKSERVER=$2; shift 2;;
     -a) APPLICATION=$2; shift 2;;
+    -D) DIR=$2; shift 2;;
    --) shift ; break ;;
     h|*) help_message ; exit 1 ;;
   esac
@@ -46,5 +49,5 @@ fi
   -S $SOURCE_HOST \
   -a $APPLICATION \
   -M <%= @db_mappings %> \
-  -D / \
+  -D $DIR \
   -U <%= @local_user %>
