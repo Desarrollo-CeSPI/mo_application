@@ -65,3 +65,5 @@ default['mo_application']['backup']['notifiers'] = []
 
 default['mo_application']['custom_error_pages'] = nil
 default['mo_application']['error_pages_location'] = "/opt/error_pages"
+
+default['mo_application']['monitoring']['custom_check'] = 'check_custom_application.sh'
