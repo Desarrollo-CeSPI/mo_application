@@ -4,7 +4,7 @@ check_name = mo_application_custom_monitoring_check_script
 
 file check_name do
   content <<-SCRIPT
-#!/bin/bash
+#!/bin/bash -l
 cd ~/application/current
 $@
   SCRIPT
