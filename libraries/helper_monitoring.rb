@@ -18,3 +18,19 @@ def mo_application_http_check(data)
     end
   end
 end
+
+def mo_application_custom_monitoring_check_script
+ File.join node["mo_monitoring_client"]["install_directory"], node['mo_application']['monitoring']['custom_check']
+end
+
+def mo_application_custom_check(data)
+  return unless data['monitoring']
+  return unless data['monitoring']['custom']
+  check_name = "check-custom-app_#{data['id']}"
+  environment = (data['environment'] || {}).map {|k,v| "#{k}=#{v}"}.join ' '
+  nrpe_check check_name do
+    command "sudo -Hu #{data['user']} #{environment} #{mo_application_custom_monitoring_check_script} #{data['monitoring']['custom']}"
+    notifies :restart, "service[#{node['nrpe']['service_name']}]"
+    action (data['remove'] ? :remove : :add)
+  end
+end
