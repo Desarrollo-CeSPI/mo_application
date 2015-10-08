@@ -25,6 +25,7 @@ def mo_application_backup(data)
   data['backup'] ||= Hash.new
   data['backup']['user'] ||= backup_default_user(data)
   data['backup']['archives'] ||= backup_shared_archives(data)
+  data['backup']['exclude'] ||= []
   data['backup']['exclude_databases'] ||= []
   data['backup']['databases'] ||= backup_databases(data)
   data['backup']['storages'] ||= backup_default_storages
@@ -34,6 +35,7 @@ def mo_application_backup(data)
 
   mo_backup backup_name do
     archives  data['backup']['archives']
+    exclude   data['backup']['exclude']
     databases data['backup']['databases']
     storages  data['backup']['storages']
     notifiers data['backup']['notifiers']
