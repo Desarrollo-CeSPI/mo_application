@@ -40,6 +40,9 @@ def mo_application_backup(data)
     storages  data['backup']['storages']
     notifiers data['backup']['notifiers']
     user data['backup']['user']
+    daily_keeps data['backup']['daily_keeps']
+    weekly_keeps data['backup']['weekly_keeps']
+    monthly_keeps data['backup']['monthly_keeps']
     action (data['remove'] ? :remove : :create)
   end
 
