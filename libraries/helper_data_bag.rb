@@ -39,8 +39,8 @@ def _mo_application_from_data_bag(cookbook_name, id, ssh_private_key = true, dat
 end
 
 # Wrapper for _mo_application_from_data_bag
-def mo_application_from_data_bag(cookbook_name, ssh_private_key = true)
-  _mo_application_from_data_bag cookbook_name, node[cookbook_name]['id'], ssh_private_key
+def mo_application_from_data_bag(cookbook_name, ssh_private_key = true, id=nil)
+  _mo_application_from_data_bag cookbook_name, id || node[cookbook_name]['id'], ssh_private_key
 end
 
 # Wrapper for _mo_application_from_data_bag considering no ssh_private_key
