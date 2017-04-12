@@ -107,8 +107,8 @@ def mo_testing_apps_from_databag(cookbook_name)
 
     dotconfig values
     mo_database values
-    mo_application_backup values
-    mo_application_sync values
+#    mo_application_backup values
+#    mo_application_sync values
   end
 end
 
